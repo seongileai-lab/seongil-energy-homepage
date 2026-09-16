@@ -146,7 +146,17 @@
 
 /* ===== 어드민 편집 패널 폼 스타일 ===== */
 .admin-shell { display: flex; height: calc(100vh - 48px); overflow: hidden; }
-.admin-preview-note { flex: 1; background: #f1f5f9; padding: 24px; overflow-y: auto; }
+.admin-preview-note { flex: 1; background: #cbd5e1; padding: 14px; overflow: hidden; display: flex; }
+
+.mock-browser { width: 100%; height: 100%; background: #ffffff; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); overflow: hidden; display: flex; flex-direction: column; border: 1px solid #94a3b8; }
+.mock-browser-bar { height: 30px; background: #e2e8f0; display: flex; align-items: center; padding: 0 12px; gap: 6px; border-bottom: 1px solid #cbd5e1; flex-shrink: 0; }
+.mock-dot { width: 9px; height: 9px; border-radius: 50%; }
+.mock-dot-red { background: #ef4444; }
+.mock-dot-yellow { background: #f59e0b; }
+.mock-dot-green { background: #10b981; }
+.mock-browser-screen { flex: 1; position: relative; overflow-y: auto; overflow-x: hidden; }
+.mock-browser-screen .site-header { position: sticky; top: 0; }
+.mock-browser-screen .hero-canvas { height: 70vh; min-height: 420px; }
 .editor-pane { width: 460px; flex-shrink: 0; background: #ffffff; border-left: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; }
 .depth1-tabs { display: flex; background: #0f172a; padding: 6px 8px 0 8px; gap: 4px; flex-shrink: 0; }
 .depth1-btn { padding: 8px 10px; border: none; background: #1e293b; color: #94a3b8; font-size: 0.75rem; font-weight: 600; border-radius: 6px 6px 0 0; cursor: pointer; }

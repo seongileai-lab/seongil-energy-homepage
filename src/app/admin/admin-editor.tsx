@@ -6,6 +6,7 @@ import { saveSiteContent } from './actions';
 import HeroEditor from './hero-editor';
 import HubEditor from './hub-editor';
 import MiscEditor from './misc-editor';
+import LivePreview from './live-preview';
 
 type TabKey = 'home' | 'products' | 'gallery' | 'advisory' | 'etc';
 
@@ -39,11 +40,7 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
   return (
     <div className="admin-shell">
       <div className="admin-preview-note">
-        <p style={{ fontSize: '0.85rem', color: '#475569', lineHeight: 1.7 }}>
-          왼쪽 탭에서 원하는 섹션을 수정한 뒤 우측 하단의 <strong>전체 저장</strong> 버튼을 누르면 실제 홈페이지에 즉시 반영됩니다.
-          <br /><br />
-          실제 화면은 새 탭에서 <a href="/" target="_blank" style={{ color: '#2563eb', fontWeight: 600 }}>홈페이지 바로가기 →</a> 로 확인하세요.
-        </p>
+        <LivePreview content={content} tab={tab} />
       </div>
 
       <aside className="editor-pane">
