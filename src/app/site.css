@@ -25,7 +25,8 @@
 .site-nav-right { display: flex; align-items: center; gap: 20px; }
 .site-nav-right a { font-size: 0.83rem; font-weight: 600; color: #1e293b; cursor: pointer; transition: color 0.2s; text-decoration: none; }
 .site-nav-right a:hover { color: #2563eb; }
-.site-nav-btn { background: #0f172a; color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; cursor: pointer; text-decoration: none; }
+.site-nav-right a.site-nav-btn { background: #0f172a; color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; cursor: pointer; text-decoration: none; }
+.site-nav-right a.site-nav-btn:hover { color: #fff; background: #2563eb; }
 
 .hero-canvas {
   height: 92vh;
@@ -109,8 +110,8 @@
 .btn-page-download.disabled { background: #cbd5e1; cursor: not-allowed; pointer-events: none; }
 
 .content-hub-page.contact-hub-override { padding: 150px 48px 90px 48px; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
-.contact-wrapper { width: 100%; max-width: 980px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 64px; align-items: start; }
-.contact-intro-box { display: flex; flex-direction: column; padding-top: 10px; }
+.contact-wrapper { width: 100%; max-width: 560px; display: flex; flex-direction: column; align-items: center; gap: 32px; margin: 0 auto; }
+.contact-intro-box { display: flex; flex-direction: column; align-items: center; text-align: center; }
 .contact-main-heading { font-size: 3.4rem; font-weight: 800; color: #0f172a; line-height: 1.15; margin-bottom: 24px; letter-spacing: -0.02em; }
 .contact-sub-label { font-size: 0.95rem; font-weight: 700; color: #2563eb; margin-bottom: 12px; }
 .contact-lead-desc { font-size: 1.05rem; font-weight: 400; color: #64748b; line-height: 1.7; white-space: pre-line; }

@@ -8,20 +8,18 @@ export interface ContactFormState {
 }
 
 export async function submitContactForm(_prev: ContactFormState, formData: FormData): Promise<ContactFormState> {
-  const firstName = String(formData.get('firstName') || '').trim();
-  const lastName = String(formData.get('lastName') || '').trim();
+  const name = String(formData.get('name') || '').trim();
   const email = String(formData.get('email') || '').trim();
   const phone = String(formData.get('phone') || '').trim();
   const message = String(formData.get('message') || '').trim();
 
-  if (!firstName || !lastName || !email || !message) {
+  if (!name || !email || !message) {
     return { ok: false, error: '필수 항목을 모두 입력해주세요.' };
   }
 
   const supabase = await createClient();
   const { error } = await supabase.from('contact_submissions').insert({
-    first_name: firstName,
-    last_name: lastName,
+    name,
     email,
     phone: phone || null,
     message,
