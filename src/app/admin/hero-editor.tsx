@@ -31,7 +31,7 @@ export default function HeroEditor({ hero, showcase, onHeroChange, onShowcaseCha
         label="좌측 상단 로고 이미지"
         value={hero.logoUrl}
         onChange={(url) => set('logoUrl', url)}
-        guideText="로고 높이 28px에 맞춰 최적화됩니다."
+        guideText="로고 높이 42px에 맞춰 최적화됩니다."
       />
 
       <div className="form-group">
