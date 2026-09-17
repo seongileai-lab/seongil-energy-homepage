@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { getSiteContent } from "@/lib/content";
 
-export const metadata: Metadata = {
-  title: "SEONGIL ENERGY",
-  description: "성일에너지 공식 홈페이지",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { footer } = await getSiteContent();
+  return {
+    title: footer.brand,
+    description: `${footer.brand} 공식 홈페이지`,
+  };
+}
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

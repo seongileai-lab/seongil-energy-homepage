@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import { getSiteContent } from '@/lib/content';
 
 export interface ContactFormState {
   ok: boolean;
@@ -27,6 +28,19 @@ export async function submitContactForm(_prev: ContactFormState, formData: FormD
 
   if (error) {
     return { ok: false, error: '전송에 실패했습니다. 잠시 후 다시 시도해주세요.' };
+  }
+
+  const { contact } = await getSiteContent();
+  if (contact.sheetWebhookUrl) {
+    try {
+      await fetch(contact.sheetWebhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, phone, message }),
+      });
+    } catch {
+      // Sheet sync is best-effort; the submission is already saved in Supabase.
+    }
   }
 
   return { ok: true };

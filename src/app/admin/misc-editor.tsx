@@ -24,6 +24,19 @@ export default function MiscEditor({ contact, footer, privacy, terms, onContactC
       </div>
 
       <div className="form-group">
+        <label>구글 스프레드시트 연동 웹훅 URL</label>
+        <div className="guide-text">
+          문의가 접수되면 이 주소로도 함께 전송돼 스프레드시트에 자동으로 한 줄씩 추가됩니다. Apps Script 웹앱 배포 URL을 입력하세요.
+        </div>
+        <input
+          className="form-control"
+          placeholder="https://script.google.com/macros/s/xxxx/exec"
+          value={contact.sheetWebhookUrl}
+          onChange={(e) => onContactChange({ ...contact, sheetWebhookUrl: e.target.value })}
+        />
+      </div>
+
+      <div className="form-group">
         <label>푸터 - 브랜드명 / 소개 제목 / 상세 정보 / 저작권 문구</label>
         <input className="form-control" value={footer.brand} onChange={(e) => onFooterChange({ ...footer, brand: e.target.value })} />
         <input className="form-control" style={{ marginTop: 6 }} value={footer.intro} onChange={(e) => onFooterChange({ ...footer, intro: e.target.value })} />
