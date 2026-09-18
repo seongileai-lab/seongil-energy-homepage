@@ -31,17 +31,21 @@ export interface ShowcaseConfig {
   items: ShowcaseItem[];
 }
 
+export interface Attachment {
+  url: string;
+  name: string;
+}
+
 export interface HubItem {
   id: string;
   title: string;
   desc: string;
   badge: string;
   thumbnailUrl: string;
-  detailImageUrl: string;
+  detailImages: string[];
   detailVideoUrl: string;
   detailDesc: string;
-  fileUrl: string;
-  fileName: string;
+  attachments: Attachment[];
 }
 
 export interface HubConfig {
@@ -143,11 +147,10 @@ export const defaultSiteContent: SiteContent = {
         desc: '제품 1에 대한 요약 설명을 입력하세요.',
         badge: 'Brochure',
         thumbnailUrl: '',
-        detailImageUrl: '',
+        detailImages: [],
         detailVideoUrl: '',
         detailDesc: '제품 1에 대한 상세 설명을 입력하세요.',
-        fileUrl: '',
-        fileName: '',
+        attachments: [],
       },
     ],
   },
@@ -164,11 +167,10 @@ export const defaultSiteContent: SiteContent = {
         desc: '갤러리 항목 1에 대한 요약 설명을 입력하세요.',
         badge: '',
         thumbnailUrl: '',
-        detailImageUrl: '',
+        detailImages: [],
         detailVideoUrl: '',
         detailDesc: '갤러리 항목 1에 대한 상세 설명을 입력하세요.',
-        fileUrl: '',
-        fileName: '',
+        attachments: [],
       },
     ],
   },
@@ -185,11 +187,10 @@ export const defaultSiteContent: SiteContent = {
         desc: '자문 프로그램 1에 대한 요약 설명을 입력하세요.',
         badge: '',
         thumbnailUrl: '',
-        detailImageUrl: '',
+        detailImages: [],
         detailVideoUrl: '',
         detailDesc: '자문 프로그램 1에 대한 상세 설명을 입력하세요.',
-        fileUrl: '',
-        fileName: '',
+        attachments: [],
       },
     ],
   },
@@ -215,6 +216,33 @@ export const defaultSiteContent: SiteContent = {
   },
 };
 
+// Migrates items saved before multi-image/multi-attachment support existed.
+function normalizeHubItem(item: Partial<HubItem> & Record<string, unknown>): HubItem {
+  const legacyDetailImageUrl = typeof item.detailImageUrl === 'string' ? item.detailImageUrl : '';
+  const legacyFileUrl = typeof item.fileUrl === 'string' ? item.fileUrl : '';
+  const legacyFileName = typeof item.fileName === 'string' ? item.fileName : '';
+
+  return {
+    id: item.id ?? '',
+    title: item.title ?? '',
+    desc: item.desc ?? '',
+    badge: item.badge ?? '',
+    thumbnailUrl: item.thumbnailUrl ?? '',
+    detailVideoUrl: item.detailVideoUrl ?? '',
+    detailDesc: item.detailDesc ?? '',
+    detailImages: item.detailImages ?? (legacyDetailImageUrl ? [legacyDetailImageUrl] : []),
+    attachments: item.attachments ?? (legacyFileUrl ? [{ url: legacyFileUrl, name: legacyFileName || '첨부파일' }] : []),
+  };
+}
+
+function normalizeHub(hub: Partial<HubConfig> | undefined, fallback: HubConfig): HubConfig {
+  return {
+    ...fallback,
+    ...hub,
+    items: hub?.items?.length ? hub.items.map(normalizeHubItem) : fallback.items,
+  };
+}
+
 export function mergeWithDefaults(partial: Partial<SiteContent> | null | undefined): SiteContent {
   if (!partial) return defaultSiteContent;
   return {
@@ -224,9 +252,9 @@ export function mergeWithDefaults(partial: Partial<SiteContent> | null | undefin
       ...partial.showcase,
       items: partial.showcase?.items?.length ? partial.showcase.items : defaultSiteContent.showcase.items,
     },
-    products: { ...defaultSiteContent.products, ...partial.products, items: partial.products?.items ?? defaultSiteContent.products.items },
-    gallery: { ...defaultSiteContent.gallery, ...partial.gallery, items: partial.gallery?.items ?? defaultSiteContent.gallery.items },
-    advisory: { ...defaultSiteContent.advisory, ...partial.advisory, items: partial.advisory?.items ?? defaultSiteContent.advisory.items },
+    products: normalizeHub(partial.products, defaultSiteContent.products),
+    gallery: normalizeHub(partial.gallery, defaultSiteContent.gallery),
+    advisory: normalizeHub(partial.advisory, defaultSiteContent.advisory),
     contact: { ...defaultSiteContent.contact, ...partial.contact },
     footer: { ...defaultSiteContent.footer, ...partial.footer },
     privacy: { ...defaultSiteContent.privacy, ...partial.privacy },
