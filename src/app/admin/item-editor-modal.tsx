@@ -42,12 +42,16 @@ export default function ItemEditorModal({
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '24px 28px' }}>
-          <input
-            value={draft.title}
-            onChange={(e) => set('title', e.target.value)}
-            placeholder="제목"
-            style={{ width: '100%', fontSize: '1.6rem', fontWeight: 800, color: '#0f172a', border: 'none', outline: 'none', marginBottom: 16 }}
-          />
+          <div className="form-group">
+            <label>제목</label>
+            <input
+              className="form-control"
+              value={draft.title}
+              onChange={(e) => set('title', e.target.value)}
+              placeholder="제목을 입력하세요"
+              style={{ fontSize: '1.2rem', fontWeight: 700, color: '#0f172a' }}
+            />
+          </div>
 
           <div className="form-group">
             <label>목록 카드 - 배지(뱃지) 텍스트</label>
