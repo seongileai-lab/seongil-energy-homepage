@@ -217,7 +217,8 @@ export const defaultSiteContent: SiteContent = {
 };
 
 // Migrates items saved before multi-image/multi-attachment support existed.
-function normalizeHubItem(item: Partial<HubItem> & Record<string, unknown>): HubItem {
+function normalizeHubItem(raw: HubItem): HubItem {
+  const item = raw as Partial<HubItem> & Record<string, unknown>;
   const legacyDetailImageUrl = typeof item.detailImageUrl === 'string' ? item.detailImageUrl : '';
   const legacyFileUrl = typeof item.fileUrl === 'string' ? item.fileUrl : '';
   const legacyFileName = typeof item.fileName === 'string' ? item.fileName : '';
