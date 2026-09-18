@@ -16,6 +16,7 @@ function newItem(): HubItem {
     detailVideoUrl: '',
     detailDesc: '',
     attachments: [],
+    showContactCta: false,
   };
 }
 

@@ -98,6 +98,17 @@ export default function ItemEditorModal({
             values={draft.attachments}
             onChange={(attachments) => set('attachments', attachments)}
           />
+
+          <div className="form-group" style={{ borderBottom: 'none' }}>
+            <label className="switch-label">
+              <input
+                type="checkbox"
+                checked={draft.showContactCta}
+                onChange={(e) => set('showContactCta', e.target.checked)}
+              />
+              상세 페이지 하단에 &quot;문의하기&quot; 버튼 표시 (Contact 페이지로 이동)
+            </label>
+          </div>
         </div>
 
         <div style={{ display: 'flex', gap: 8, padding: '16px 24px', borderTop: '1px solid #e2e8f0' }}>

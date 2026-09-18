@@ -4,14 +4,16 @@ import { useState, useTransition } from 'react';
 import type { SiteContent } from '@/lib/content-types';
 import { saveSiteContent } from './actions';
 import HeroEditor from './hero-editor';
+import AboutEditor from './about-editor';
 import HubEditor from './hub-editor';
 import MiscEditor from './misc-editor';
 import LivePreview from './live-preview';
 
-type TabKey = 'home' | 'products' | 'gallery' | 'advisory' | 'etc';
+type TabKey = 'home' | 'about' | 'products' | 'gallery' | 'advisory' | 'etc';
 
 const tabs: { key: TabKey; label: string }[] = [
   { key: 'home', label: '홈' },
+  { key: 'about', label: 'About' },
   { key: 'products', label: 'Products' },
   { key: 'gallery', label: 'Gallery' },
   { key: 'advisory', label: 'Advisory' },
@@ -61,6 +63,7 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
               onShowcaseChange={(showcase) => setContent({ ...content, showcase })}
             />
           )}
+          {tab === 'about' && <AboutEditor about={content.about} onChange={(about) => setContent({ ...content, about })} />}
           {tab === 'products' && <HubEditor hub={content.products} onChange={(products) => setContent({ ...content, products })} />}
           {tab === 'gallery' && <HubEditor hub={content.gallery} onChange={(gallery) => setContent({ ...content, gallery })} />}
           {tab === 'advisory' && <HubEditor hub={content.advisory} onChange={(advisory) => setContent({ ...content, advisory })} />}

@@ -46,6 +46,7 @@ export interface HubItem {
   detailVideoUrl: string;
   detailDesc: string;
   attachments: Attachment[];
+  showContactCta: boolean;
 }
 
 export interface HubConfig {
@@ -76,9 +77,17 @@ export interface PolicyConfig {
   content: string;
 }
 
+export interface AboutConfig {
+  heading: string;
+  subDesc: string;
+  bannerUrl: string;
+  body: string;
+}
+
 export interface SiteContent {
   hero: HeroConfig;
   showcase: ShowcaseConfig;
+  about: AboutConfig;
   products: HubConfig;
   gallery: HubConfig;
   advisory: HubConfig;
@@ -108,6 +117,12 @@ export const defaultSiteContent: SiteContent = {
     bgVideoUrl: '',
     bgPosX: 50,
     bgPosY: 50,
+  },
+  about: {
+    heading: 'About Us',
+    subDesc: '회사 소개 서브 문구를 입력하세요.',
+    bannerUrl: '',
+    body: '회사 기본 소개 내용을 입력하세요.',
   },
   showcase: {
     topLabel: 'Building is What We Do',
@@ -151,6 +166,7 @@ export const defaultSiteContent: SiteContent = {
         detailVideoUrl: '',
         detailDesc: '제품 1에 대한 상세 설명을 입력하세요.',
         attachments: [],
+        showContactCta: false,
       },
     ],
   },
@@ -171,6 +187,7 @@ export const defaultSiteContent: SiteContent = {
         detailVideoUrl: '',
         detailDesc: '갤러리 항목 1에 대한 상세 설명을 입력하세요.',
         attachments: [],
+        showContactCta: false,
       },
     ],
   },
@@ -191,6 +208,7 @@ export const defaultSiteContent: SiteContent = {
         detailVideoUrl: '',
         detailDesc: '자문 프로그램 1에 대한 상세 설명을 입력하세요.',
         attachments: [],
+        showContactCta: true,
       },
     ],
   },
@@ -233,6 +251,7 @@ function normalizeHubItem(raw: HubItem): HubItem {
     detailDesc: item.detailDesc ?? '',
     detailImages: item.detailImages ?? (legacyDetailImageUrl ? [legacyDetailImageUrl] : []),
     attachments: item.attachments ?? (legacyFileUrl ? [{ url: legacyFileUrl, name: legacyFileName || '첨부파일' }] : []),
+    showContactCta: item.showContactCta ?? false,
   };
 }
 
@@ -248,6 +267,7 @@ export function mergeWithDefaults(partial: Partial<SiteContent> | null | undefin
   if (!partial) return defaultSiteContent;
   return {
     hero: { ...defaultSiteContent.hero, ...partial.hero },
+    about: { ...defaultSiteContent.about, ...partial.about },
     showcase: {
       ...defaultSiteContent.showcase,
       ...partial.showcase,

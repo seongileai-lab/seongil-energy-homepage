@@ -23,7 +23,7 @@ export default function HubDetail({ basePath, backLabel, item }: { basePath: str
         )}
 
         {images.length > 0 && (
-          <div className={`detail-image-grid${images.length === 1 ? ' single' : ''}`}>
+          <div className="detail-image-grid">
             {images.map((url, i) => (
               <div key={i} className="detail-image-grid-item" style={{ backgroundImage: `url('${url}')` }} />
             ))}
@@ -54,6 +54,12 @@ export default function HubDetail({ basePath, backLabel, item }: { basePath: str
             ))
           )}
         </div>
+
+        {item.showContactCta && (
+          <div className="detail-contact-cta">
+            <Link href="/contact" className="btn-zigzag-link">문의하기 →</Link>
+          </div>
+        )}
       </div>
     </div>
   );

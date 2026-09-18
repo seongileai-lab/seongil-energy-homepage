@@ -101,9 +101,9 @@
 .detail-view-img { width: 100%; height: 100%; background-size: cover; background-position: center; display: block; }
 .detail-view-video { width: 100%; height: 100%; border: none; display: block; }
 .detail-view-body { font-size: 1rem; line-height: 1.85; color: #334155; white-space: pre-line; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 1px solid #e2e8f0; }
-.detail-image-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 30px; }
-.detail-image-grid.single { grid-template-columns: 1fr; }
+.detail-image-grid { display: flex; flex-direction: column; gap: 16px; margin-bottom: 30px; }
 .detail-image-grid-item { width: 100%; aspect-ratio: 16 / 9; border-radius: 8px; background-color: #f1f5f9; background-size: cover; background-position: center; border: 1px solid #e2e8f0; }
+.detail-contact-cta { display: flex; justify-content: center; margin-top: 12px; margin-bottom: 30px; }
 .detail-attachment-list { display: flex; flex-direction: column; gap: 12px; }
 .detail-download-card { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
 .detail-download-meta { display: flex; flex-direction: column; gap: 4px; }
@@ -132,6 +132,7 @@
 .policy-container { width: 100%; max-width: 860px; }
 .policy-container h2 { font-size: 1.9rem; font-weight: 800; color: #0f172a; margin-bottom: 24px; padding-bottom: 14px; border-bottom: 2px solid #0f172a; }
 .policy-body { font-size: 0.95rem; color: #334155; line-height: 1.85; white-space: pre-line; }
+.about-body { font-size: 0.95rem; color: #334155; line-height: 1.9; white-space: pre-line; max-width: 760px; margin: 0 auto; }
 
 .site-footer { width: 100%; background-color: #fafafa; border-top: 1px solid #e5e7eb; padding: 46px 48px 38px 48px; color: #64748b; font-size: 0.8rem; line-height: 1.7; }
 .footer-container { max-width: 980px; margin: 0 auto; }

@@ -5,7 +5,7 @@ import SiteHeader from '@/components/site/site-header';
 import SiteFooter from '@/components/site/site-footer';
 import HubList from '@/components/site/hub-list';
 
-type TabKey = 'home' | 'products' | 'gallery' | 'advisory' | 'etc';
+type TabKey = 'home' | 'about' | 'products' | 'gallery' | 'advisory' | 'etc';
 
 export default function LivePreview({ content, tab }: { content: SiteContent; tab: TabKey }) {
   const { hero, showcase } = content;
@@ -67,6 +67,19 @@ export default function LivePreview({ content, tab }: { content: SiteContent; ta
               </div>
             </section>
           </>
+        )}
+
+        {tab === 'about' && (
+          <div className="content-hub-page">
+            <div className="hub-container">
+              <div className="hub-header">
+                <h1 className="hub-title">{content.about.heading}</h1>
+                <p className="hub-desc">{content.about.subDesc}</p>
+              </div>
+              {content.about.bannerUrl && <div className="hub-key-banner" style={{ backgroundImage: `url('${content.about.bannerUrl}')` }} />}
+              <div className="about-body">{content.about.body}</div>
+            </div>
+          </div>
         )}
 
         {tab === 'products' && <HubList basePath="/products" hub={content.products} />}
