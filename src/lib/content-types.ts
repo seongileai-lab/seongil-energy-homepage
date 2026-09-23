@@ -1,5 +1,3 @@
-export type LinkTarget = 'pageProducts' | 'pageAdvisory';
-
 export interface HeroConfig {
   logoUrl: string;
   logoText: string;
@@ -21,7 +19,7 @@ export interface ShowcaseItem {
   title: string;
   desc: string;
   imageUrl: string;
-  linkTo: LinkTarget;
+  linkTo: string; // a HubSection id, or '' for no link
 }
 
 export interface ShowcaseConfig {
@@ -49,7 +47,9 @@ export interface HubItem {
   showContactCta: boolean;
 }
 
-export interface HubConfig {
+export interface HubSection {
+  id: string; // also used as the URL slug
+  navLabel: string; // shown in the header nav and the admin tab
   mainTitle: string;
   mainDesc: string;
   bannerUrl: string;
@@ -88,16 +88,62 @@ export interface SiteContent {
   hero: HeroConfig;
   showcase: ShowcaseConfig;
   about: AboutConfig;
-  products: HubConfig;
-  advisory: HubConfig;
+  hubs: HubSection[];
   contact: ContactConfig;
   footer: FooterConfig;
   privacy: PolicyConfig;
   terms: PolicyConfig;
 }
 
-function id(prefix: string, n: number) {
-  return `${prefix}-${n}`;
+const RESERVED_SLUGS = new Set(['about', 'contact', 'privacy', 'terms', 'admin', 'api']);
+
+export function slugify(input: string): string {
+  const base = input
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-+|-+$)/g, '');
+  return base || `hub-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+export function uniqueHubSlug(desired: string, existingIds: string[]): string {
+  const taken = new Set(existingIds);
+  let candidate = desired;
+  let n = 2;
+  while (taken.has(candidate) || RESERVED_SLUGS.has(candidate)) {
+    candidate = `${desired}-${n}`;
+    n += 1;
+  }
+  return candidate;
+}
+
+export function newHubSection(navLabel: string, existingIds: string[]): HubSection {
+  const id = uniqueHubSlug(slugify(navLabel), existingIds);
+  return {
+    id,
+    navLabel,
+    mainTitle: navLabel,
+    mainDesc: '페이지 소개 문구를 입력하세요.',
+    bannerUrl: '',
+    subTitle: 'Lineup',
+    subDesc: '목록 섹션 설명을 입력하세요. (클릭 시 상세페이지로 이동)',
+    items: [],
+  };
+}
+
+export function newHubItem(): HubItem {
+  return {
+    id: `item-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    title: '새 항목',
+    desc: '',
+    badge: '',
+    thumbnailUrl: '',
+    detailImages: [],
+    detailVideoUrl: '',
+    detailDesc: '',
+    attachments: [],
+    showContactCta: false,
+  };
 }
 
 export const defaultSiteContent: SiteContent = {
@@ -132,58 +178,64 @@ export const defaultSiteContent: SiteContent = {
         title: '소개 항목 1',
         desc: '소개 항목 1에 대한 설명을 입력하세요.',
         imageUrl: '',
-        linkTo: 'pageProducts',
+        linkTo: 'products',
       },
       {
         title: '소개 항목 2',
         desc: '소개 항목 2에 대한 설명을 입력하세요.',
         imageUrl: '',
-        linkTo: 'pageAdvisory',
+        linkTo: 'advisory',
       },
     ],
   },
-  products: {
-    mainTitle: 'Products',
-    mainDesc: 'Products 페이지 소개 문구를 입력하세요.',
-    bannerUrl: '',
-    subTitle: 'Lineup',
-    subDesc: '목록 섹션 설명을 입력하세요. (클릭 시 상세페이지로 이동)',
-    items: [
-      {
-        id: id('prod', 1),
-        title: '제품 1',
-        desc: '제품 1에 대한 요약 설명을 입력하세요.',
-        badge: 'Brochure',
-        thumbnailUrl: '',
-        detailImages: [],
-        detailVideoUrl: '',
-        detailDesc: '제품 1에 대한 상세 설명을 입력하세요.',
-        attachments: [],
-        showContactCta: false,
-      },
-    ],
-  },
-  advisory: {
-    mainTitle: 'Advisory',
-    mainDesc: 'Advisory 페이지 소개 문구를 입력하세요.',
-    bannerUrl: '',
-    subTitle: 'Programs',
-    subDesc: '목록 섹션 설명을 입력하세요. (클릭 시 상세페이지로 이동)',
-    items: [
-      {
-        id: id('adv', 1),
-        title: '자문 프로그램 1',
-        desc: '자문 프로그램 1에 대한 요약 설명을 입력하세요.',
-        badge: '',
-        thumbnailUrl: '',
-        detailImages: [],
-        detailVideoUrl: '',
-        detailDesc: '자문 프로그램 1에 대한 상세 설명을 입력하세요.',
-        attachments: [],
-        showContactCta: true,
-      },
-    ],
-  },
+  hubs: [
+    {
+      id: 'products',
+      navLabel: 'Products',
+      mainTitle: 'Products',
+      mainDesc: 'Products 페이지 소개 문구를 입력하세요.',
+      bannerUrl: '',
+      subTitle: 'Lineup',
+      subDesc: '목록 섹션 설명을 입력하세요. (클릭 시 상세페이지로 이동)',
+      items: [
+        {
+          id: 'prod-1',
+          title: '제품 1',
+          desc: '제품 1에 대한 요약 설명을 입력하세요.',
+          badge: 'Brochure',
+          thumbnailUrl: '',
+          detailImages: [],
+          detailVideoUrl: '',
+          detailDesc: '제품 1에 대한 상세 설명을 입력하세요.',
+          attachments: [],
+          showContactCta: false,
+        },
+      ],
+    },
+    {
+      id: 'advisory',
+      navLabel: 'Advisory',
+      mainTitle: 'Advisory',
+      mainDesc: 'Advisory 페이지 소개 문구를 입력하세요.',
+      bannerUrl: '',
+      subTitle: 'Programs',
+      subDesc: '목록 섹션 설명을 입력하세요. (클릭 시 상세페이지로 이동)',
+      items: [
+        {
+          id: 'adv-1',
+          title: '자문 프로그램 1',
+          desc: '자문 프로그램 1에 대한 요약 설명을 입력하세요.',
+          badge: '',
+          thumbnailUrl: '',
+          detailImages: [],
+          detailVideoUrl: '',
+          detailDesc: '자문 프로그램 1에 대한 상세 설명을 입력하세요.',
+          attachments: [],
+          showContactCta: true,
+        },
+      ],
+    },
+  ],
   contact: {
     subLabel: 'Talk to Us',
     heading: 'Contact Us',
@@ -227,11 +279,10 @@ function normalizeHubItem(raw: HubItem): HubItem {
   };
 }
 
-function normalizeHub(hub: Partial<HubConfig> | undefined, fallback: HubConfig): HubConfig {
+function normalizeHubSection(raw: HubSection): HubSection {
   return {
-    ...fallback,
-    ...hub,
-    items: hub?.items?.length ? hub.items.map(normalizeHubItem) : fallback.items,
+    ...raw,
+    items: raw.items?.length ? raw.items.map(normalizeHubItem) : [],
   };
 }
 
@@ -245,8 +296,7 @@ export function mergeWithDefaults(partial: Partial<SiteContent> | null | undefin
       ...partial.showcase,
       items: partial.showcase?.items?.length ? partial.showcase.items : defaultSiteContent.showcase.items,
     },
-    products: normalizeHub(partial.products, defaultSiteContent.products),
-    advisory: normalizeHub(partial.advisory, defaultSiteContent.advisory),
+    hubs: partial.hubs?.length ? partial.hubs.map(normalizeHubSection) : defaultSiteContent.hubs,
     contact: { ...defaultSiteContent.contact, ...partial.contact },
     footer: { ...defaultSiteContent.footer, ...partial.footer },
     privacy: { ...defaultSiteContent.privacy, ...partial.privacy },

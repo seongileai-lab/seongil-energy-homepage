@@ -5,10 +5,11 @@ import SiteHeader from '@/components/site/site-header';
 import SiteFooter from '@/components/site/site-footer';
 import HubList from '@/components/site/hub-list';
 
-type TabKey = 'home' | 'about' | 'products' | 'advisory' | 'etc';
+type TabKey = string;
 
 export default function LivePreview({ content, tab }: { content: SiteContent; tab: TabKey }) {
   const { hero, showcase } = content;
+  const activeHub = content.hubs.find((h) => h.id === tab);
 
   const contentClass = [
     'canvas-content',
@@ -32,7 +33,7 @@ export default function LivePreview({ content, tab }: { content: SiteContent; ta
         <div className="mock-dot mock-dot-green" />
       </div>
       <div className="mock-browser-screen" onClickCapture={(e) => e.preventDefault()}>
-        <SiteHeader logoUrl={hero.logoUrl} logoText={hero.logoText} headerBlur={hero.headerBlur} />
+        <SiteHeader logoUrl={hero.logoUrl} logoText={hero.logoText} headerBlur={hero.headerBlur} hubs={content.hubs} />
 
         {tab === 'home' && (
           <>
@@ -82,8 +83,7 @@ export default function LivePreview({ content, tab }: { content: SiteContent; ta
           </div>
         )}
 
-        {tab === 'products' && <HubList basePath="/products" hub={content.products} />}
-        {tab === 'advisory' && <HubList basePath="/advisory" hub={content.advisory} />}
+        {activeHub && <HubList basePath={`/${activeHub.id}`} hub={activeHub} />}
 
         {tab === 'etc' && (
           <div className="content-hub-page contact-hub-override">

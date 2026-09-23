@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import type { HubConfig } from '@/lib/content-types';
+import type { HubSection } from '@/lib/content-types';
 
-export default function HubList({ basePath, hub }: { basePath: string; hub: HubConfig }) {
+export default function HubList({ basePath, hub }: { basePath: string; hub: HubSection }) {
   return (
     <div className="content-hub-page">
       <div className="hub-container">

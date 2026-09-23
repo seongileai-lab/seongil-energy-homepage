@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import type { SiteContent } from '@/lib/content-types';
+import { type SiteContent, newHubSection } from '@/lib/content-types';
 import { saveSiteContent } from './actions';
 import HeroEditor from './hero-editor';
 import AboutEditor from './about-editor';
@@ -9,15 +9,7 @@ import HubEditor from './hub-editor';
 import MiscEditor from './misc-editor';
 import LivePreview from './live-preview';
 
-type TabKey = 'home' | 'about' | 'products' | 'advisory' | 'etc';
-
-const tabs: { key: TabKey; label: string }[] = [
-  { key: 'home', label: '홈' },
-  { key: 'about', label: 'About' },
-  { key: 'products', label: 'Products' },
-  { key: 'advisory', label: 'Advisory' },
-  { key: 'etc', label: '기타' },
-];
+type TabKey = 'home' | 'about' | 'etc' | string;
 
 export default function AdminEditor({ initialContent }: { initialContent: SiteContent }) {
   const [content, setContent] = useState(initialContent);
@@ -25,6 +17,8 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
   const [pending, startTransition] = useTransition();
   const [savedAt, setSavedAt] = useState<string | null>(null);
   const [saveError, setSaveError] = useState('');
+  const [addingHub, setAddingHub] = useState(false);
+  const [newHubName, setNewHubName] = useState('');
 
   function handleSave() {
     setSaveError('');
@@ -38,6 +32,27 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
     });
   }
 
+  function handleConfirmAddHub() {
+    const name = newHubName.trim();
+    if (!name) {
+      setAddingHub(false);
+      setNewHubName('');
+      return;
+    }
+    const hub = newHubSection(name, content.hubs.map((h) => h.id));
+    setContent({ ...content, hubs: [...content.hubs, hub] });
+    setTab(hub.id);
+    setAddingHub(false);
+    setNewHubName('');
+  }
+
+  function handleDeleteHub(hubId: string) {
+    setContent({ ...content, hubs: content.hubs.filter((h) => h.id !== hubId) });
+    setTab('home');
+  }
+
+  const activeHub = content.hubs.find((h) => h.id === tab);
+
   return (
     <div className="admin-shell">
       <div className="admin-preview-note">
@@ -46,25 +61,51 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
 
       <aside className="editor-pane">
         <nav className="depth1-tabs">
-          {tabs.map((t) => (
-            <button key={t.key} className={`depth1-btn${tab === t.key ? ' active' : ''}`} onClick={() => setTab(t.key)}>
-              {t.label}
+          <button className={`depth1-btn${tab === 'home' ? ' active' : ''}`} onClick={() => setTab('home')}>홈</button>
+          <button className={`depth1-btn${tab === 'about' ? ' active' : ''}`} onClick={() => setTab('about')}>About</button>
+          {content.hubs.map((hub) => (
+            <button key={hub.id} className={`depth1-btn${tab === hub.id ? ' active' : ''}`} onClick={() => setTab(hub.id)}>
+              {hub.navLabel}
             </button>
           ))}
+          <button className="depth1-btn" title="새 탭 추가" onClick={() => setAddingHub(true)}>+</button>
+          <button className={`depth1-btn${tab === 'etc' ? ' active' : ''}`} onClick={() => setTab('etc')}>기타</button>
         </nav>
+
+        {addingHub && (
+          <div style={{ display: 'flex', gap: 6, padding: '10px 12px', background: '#eff6ff', borderBottom: '1px solid #bfdbfe' }}>
+            <input
+              autoFocus
+              className="form-control"
+              placeholder="새 탭 이름 (예: Gallery, News, Team)"
+              value={newHubName}
+              onChange={(e) => setNewHubName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleConfirmAddHub()}
+              style={{ flex: 1 }}
+            />
+            <button type="button" className="btn-item-toggle" onClick={handleConfirmAddHub}>추가</button>
+            <button type="button" className="btn-item-delete" onClick={() => { setAddingHub(false); setNewHubName(''); }}>취소</button>
+          </div>
+        )}
 
         <div className="tab-content" style={{ display: 'block' }}>
           {tab === 'home' && (
             <HeroEditor
               hero={content.hero}
               showcase={content.showcase}
+              hubs={content.hubs}
               onHeroChange={(hero) => setContent({ ...content, hero })}
               onShowcaseChange={(showcase) => setContent({ ...content, showcase })}
             />
           )}
           {tab === 'about' && <AboutEditor about={content.about} onChange={(about) => setContent({ ...content, about })} />}
-          {tab === 'products' && <HubEditor hub={content.products} onChange={(products) => setContent({ ...content, products })} />}
-          {tab === 'advisory' && <HubEditor hub={content.advisory} onChange={(advisory) => setContent({ ...content, advisory })} />}
+          {activeHub && (
+            <HubEditor
+              hub={activeHub}
+              onChange={(updated) => setContent({ ...content, hubs: content.hubs.map((h) => (h.id === updated.id ? updated : h)) })}
+              onDelete={() => handleDeleteHub(activeHub.id)}
+            />
+          )}
           {tab === 'etc' && (
             <MiscEditor
               contact={content.contact}

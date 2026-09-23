@@ -2,14 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import type { HubSection } from '@/lib/content-types';
 
 interface SiteHeaderProps {
   logoUrl: string;
   logoText: string;
   headerBlur: boolean;
+  hubs: HubSection[];
 }
 
-export default function SiteHeader({ logoUrl, logoText, headerBlur }: SiteHeaderProps) {
+export default function SiteHeader({ logoUrl, logoText, headerBlur, hubs }: SiteHeaderProps) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -30,8 +32,11 @@ export default function SiteHeader({ logoUrl, logoText, headerBlur }: SiteHeader
       </Link>
       <nav className="site-nav-right">
         <Link href="/about" style={{ textDecoration: 'none', color: '#1e293b', fontSize: '0.83rem', fontWeight: 600 }}>About Us</Link>
-        <Link href="/products" className="menu-link" style={{ textDecoration: 'none', color: '#1e293b', fontSize: '0.83rem', fontWeight: 600 }}>Products</Link>
-        <Link href="/advisory" style={{ textDecoration: 'none', color: '#1e293b', fontSize: '0.83rem', fontWeight: 600 }}>Advisory</Link>
+        {hubs.map((hub) => (
+          <Link key={hub.id} href={`/${hub.id}`} style={{ textDecoration: 'none', color: '#1e293b', fontSize: '0.83rem', fontWeight: 600 }}>
+            {hub.navLabel}
+          </Link>
+        ))}
         <Link href="/contact" className="site-nav-btn">Contact</Link>
       </nav>
     </header>

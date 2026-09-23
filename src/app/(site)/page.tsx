@@ -1,11 +1,6 @@
 import Link from 'next/link';
 import { getSiteContent } from '@/lib/content';
 
-const linkPathMap = {
-  pageProducts: '/products',
-  pageAdvisory: '/advisory',
-} as const;
-
 export default async function HomePage() {
   const { hero, showcase } = await getSiteContent();
 
@@ -48,7 +43,7 @@ export default async function HomePage() {
               <div className="zigzag-textbox">
                 <div className="zigzag-tag">{item.title}</div>
                 <div className="zigzag-body-desc">{item.desc}</div>
-                <Link className="btn-zigzag-link" href={linkPathMap[item.linkTo]}>View All</Link>
+                <Link className="btn-zigzag-link" href={item.linkTo ? `/${item.linkTo}` : '#'}>View All</Link>
               </div>
               <div className="zigzag-imgbox" style={{ backgroundImage: `url('${item.imageUrl}')` }} />
             </div>

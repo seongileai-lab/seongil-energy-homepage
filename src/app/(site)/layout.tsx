@@ -7,7 +7,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
 
   return (
     <div className="flex min-h-screen flex-col">
-      <SiteHeader logoUrl={content.hero.logoUrl} logoText={content.hero.logoText} headerBlur={content.hero.headerBlur} />
+      <SiteHeader logoUrl={content.hero.logoUrl} logoText={content.hero.logoText} headerBlur={content.hero.headerBlur} hubs={content.hubs} />
       <main className="flex-1">{children}</main>
       <SiteFooter footer={content.footer} />
     </div>

@@ -1,16 +1,17 @@
 'use client';
 
-import type { HeroConfig, ShowcaseConfig } from '@/lib/content-types';
+import type { HeroConfig, ShowcaseConfig, HubSection } from '@/lib/content-types';
 import MediaUpload from '@/components/admin/media-upload';
 
 interface Props {
   hero: HeroConfig;
   showcase: ShowcaseConfig;
+  hubs: HubSection[];
   onHeroChange: (hero: HeroConfig) => void;
   onShowcaseChange: (showcase: ShowcaseConfig) => void;
 }
 
-export default function HeroEditor({ hero, showcase, onHeroChange, onShowcaseChange }: Props) {
+export default function HeroEditor({ hero, showcase, hubs, onHeroChange, onShowcaseChange }: Props) {
   function set<K extends keyof HeroConfig>(key: K, value: HeroConfig[K]) {
     onHeroChange({ ...hero, [key]: value });
   }
@@ -105,9 +106,11 @@ export default function HeroEditor({ hero, showcase, onHeroChange, onShowcaseCha
           </div>
           <div className="form-group" style={{ marginBottom: 10, paddingBottom: 0, border: 'none' }}>
             <label>연결 페이지</label>
-            <select className="form-control" value={item.linkTo} onChange={(e) => setItem(i, { linkTo: e.target.value as typeof item.linkTo })}>
-              <option value="pageProducts">Products</option>
-              <option value="pageAdvisory">Advisory</option>
+            <select className="form-control" value={item.linkTo} onChange={(e) => setItem(i, { linkTo: e.target.value })}>
+              <option value="">(연결 안 함)</option>
+              {hubs.map((hub) => (
+                <option key={hub.id} value={hub.id}>{hub.navLabel}</option>
+              ))}
             </select>
           </div>
           <MediaUpload label="이미지" value={item.imageUrl} onChange={(url) => setItem(i, { imageUrl: url })} />
