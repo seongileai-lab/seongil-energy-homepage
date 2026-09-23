@@ -23,13 +23,13 @@ export default function ContactForm() {
 
   return (
     <form action={formAction}>
-      <div className="contact-row"><label>Name *</label><input type="text" name="name" className="contact-input" required /></div>
-      <div className="contact-row"><label>Email *</label><input type="email" name="email" className="contact-input" required /></div>
-      <div className="contact-row"><label>Phone</label><input type="tel" name="phone" className="contact-input" /></div>
-      <div className="contact-row"><label>Message *</label><textarea name="message" className="contact-input" style={{ minHeight: 100 }} required /></div>
+      <div className="contact-row"><label>이름 *</label><input type="text" name="name" className="contact-input" required /></div>
+      <div className="contact-row"><label>이메일 *</label><input type="email" name="email" className="contact-input" required /></div>
+      <div className="contact-row"><label>연락처</label><input type="tel" name="phone" className="contact-input" /></div>
+      <div className="contact-row"><label>문의 내용 *</label><textarea name="message" className="contact-input" style={{ minHeight: 100 }} required /></div>
       {state.error && <p style={{ color: '#dc2626', fontSize: '0.8rem', marginBottom: 12 }}>{state.error}</p>}
       <button type="submit" className="btn-contact-submit" disabled={pending}>
-        {pending ? 'Submitting...' : 'Submit'}
+        {pending ? '전송 중...' : '문의 보내기'}
       </button>
     </form>
   );

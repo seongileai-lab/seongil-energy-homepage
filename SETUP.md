@@ -47,23 +47,38 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-public-key>
 - 구매한 도메인을 Vercel 프로젝트의 Domains에 직접 추가 (Cloudflare 등 프록시 서비스를 앞에 두지 말 것 — SSL/라우팅 충돌 가능)
 - 레지스트라에서 Vercel이 안내하는 A/CNAME 레코드를 등록하거나, Vercel 네임서버로 위임
 
-## 7. (선택) 문의 폼 → 구글 스프레드시트 연동
+## 7. (선택) 문의 폼 → 구글 스프레드시트 + 이메일 알림
 
 1. 원하는 스프레드시트에 `Name / Email / Phone / Message` 헤더로 시트를 만들어 둠
-2. 확장 프로그램 → Apps Script 에 아래 코드 붙여넣기:
+2. 확장 프로그램 → Apps Script 에 아래 코드 붙여넣기 (`RECIPIENT_EMAIL`을 실제 수신 메일 주소로 변경):
 
 ```javascript
+var RECIPIENT_EMAIL = 'your-email@example.com';
+
 function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
   var data = JSON.parse(e.postData.contents);
+
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
   sheet.appendRow([data.name, data.email, data.phone, data.message]);
+
+  MailApp.sendEmail({
+    to: RECIPIENT_EMAIL,
+    subject: '[홈페이지 문의] ' + data.name + '님의 문의',
+    body: '이름: ' + data.name + '\n' +
+          '이메일: ' + data.email + '\n' +
+          '연락처: ' + (data.phone || '(입력 안 함)') + '\n\n' +
+          '문의 내용:\n' + data.message,
+    replyTo: data.email,
+  });
+
   return ContentService.createTextOutput(JSON.stringify({ status: 'ok' }))
     .setMimeType(ContentService.MimeType.JSON);
 }
 ```
 
 3. 배포 → 새 배포 → 웹 앱 → 액세스 권한 "모든 사용자" → 배포
-4. 나온 웹 앱 URL(`.../exec`)을 어드민 "기타" 탭의 "구글 스프레드시트 연동 웹훅 URL"에 입력 후 저장
+4. 나온 웹 앱 URL(`.../exec`)을 어드민 "기타" 탭의 "문의 알림 웹훅 URL"에 입력 후 저장
+5. (선택) 이메일 없이 스프레드시트 기록만 원하면 `MailApp.sendEmail(...)` 부분을 지우면 됨
 
 ## 콘텐츠 구조 참고
 

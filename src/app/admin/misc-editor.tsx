@@ -24,9 +24,9 @@ export default function MiscEditor({ contact, footer, privacy, terms, onContactC
       </div>
 
       <div className="form-group">
-        <label>구글 스프레드시트 연동 웹훅 URL</label>
+        <label>문의 알림 웹훅 URL (구글 시트 + 이메일)</label>
         <div className="guide-text">
-          문의가 접수되면 이 주소로도 함께 전송돼 스프레드시트에 자동으로 한 줄씩 추가됩니다. Apps Script 웹앱 배포 URL을 입력하세요.
+          문의가 접수되면 이 주소로 전송됩니다. Apps Script에서 스프레드시트 기록과 이메일 알림을 함께 처리하도록 설정하세요 (SETUP.md 참고).
         </div>
         <input
           className="form-control"

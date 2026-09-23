@@ -37,7 +37,7 @@ export default function SiteHeader({ logoUrl, logoText, headerBlur, hubs }: Site
             {hub.navLabel}
           </Link>
         ))}
-        <Link href="/contact" className="site-nav-btn">Contact</Link>
+        <Link href="/contact" className="site-nav-btn">문의하기</Link>
       </nav>
     </header>
   );
