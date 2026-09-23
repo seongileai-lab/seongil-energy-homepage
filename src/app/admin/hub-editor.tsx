@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { type HubSection, type HubItem, newHubItem } from '@/lib/content-types';
 import MediaUpload from '@/components/admin/media-upload';
 import ItemEditorModal from './item-editor-modal';
@@ -18,6 +18,11 @@ export default function HubEditor({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null);
   const [confirmingTabDelete, setConfirmingTabDelete] = useState(false);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const dragIndexRef = useRef<number | null>(null);
+  const dragOverIndexRef = useRef<number | null>(null);
 
   function setField<K extends keyof HubSection>(key: K, value: HubSection[K]) {
     onChange({ ...hub, [key]: value });
@@ -39,6 +44,59 @@ export default function HubEditor({
     onChange({ ...hub, items: hub.items.filter((it) => it.id !== deletingItemId) });
     setDeletingItemId(null);
   }
+
+  function startDrag(i: number) {
+    dragIndexRef.current = i;
+    dragOverIndexRef.current = i;
+    setDragIndex(i);
+    setDragOverIndex(i);
+  }
+
+  useEffect(() => {
+    if (dragIndex === null) return;
+
+    function onMove(e: MouseEvent) {
+      let closest = dragIndexRef.current ?? 0;
+      let closestDist = Infinity;
+      cardRefs.current.forEach((el, idx) => {
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const mid = rect.top + rect.height / 2;
+        const dist = Math.abs(e.clientY - mid);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closest = idx;
+        }
+      });
+      if (closest !== dragOverIndexRef.current) {
+        dragOverIndexRef.current = closest;
+        setDragOverIndex(closest);
+      }
+    }
+
+    function onUp() {
+      const from = dragIndexRef.current;
+      const to = dragOverIndexRef.current;
+      if (from !== null && to !== null && from !== to) {
+        const items = [...hub.items];
+        const [moved] = items.splice(from, 1);
+        items.splice(to, 0, moved);
+        onChange({ ...hub, items });
+      }
+      dragIndexRef.current = null;
+      dragOverIndexRef.current = null;
+      setDragIndex(null);
+      setDragOverIndex(null);
+    }
+
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dragIndex]);
 
   const editingItem = hub.items.find((it) => it.id === editingId) || null;
   const deletingItem = hub.items.find((it) => it.id === deletingItemId) || null;
@@ -70,10 +128,30 @@ export default function HubEditor({
 
       <button type="button" className="btn-add-item" onClick={addItem}>+ 새 항목 추가</button>
 
-      {hub.items.map((item) => (
-        <div key={item.id} className="manage-card">
+      {hub.items.length > 1 && (
+        <div className="guide-text" style={{ marginBottom: 10 }}>≡ 손잡이를 드래그해서 순서를 바꿀 수 있습니다. 순서는 실제 홈페이지 목록에도 그대로 반영됩니다.</div>
+      )}
+
+      {hub.items.map((item, i) => (
+        <div
+          key={item.id}
+          ref={(el) => { cardRefs.current[i] = el; }}
+          className="manage-card"
+          style={{
+            opacity: dragIndex === i ? 0.4 : 1,
+            borderTop: dragOverIndex === i && dragIndex !== null && dragIndex !== i ? '2px solid #2563eb' : undefined,
+            userSelect: dragIndex !== null ? 'none' : undefined,
+          }}
+        >
           <div className="manage-head">
-            <span className="manage-title">{item.title || '(제목 없음)'}</span>
+            <span
+              onMouseDown={(e) => { e.preventDefault(); startDrag(i); }}
+              style={{ cursor: 'grab', color: '#94a3b8', fontWeight: 700, padding: '0 4px' }}
+              title="드래그해서 순서 변경"
+            >
+              ≡
+            </span>
+            <span className="manage-title" style={{ flex: 1 }}>{item.title || '(제목 없음)'}</span>
             <div style={{ display: 'flex', gap: 6 }}>
               <button type="button" className="btn-item-toggle" onClick={() => setEditingId(item.id)}>편집</button>
               <button type="button" className="btn-item-delete" onClick={() => setDeletingItemId(item.id)}>삭제</button>
