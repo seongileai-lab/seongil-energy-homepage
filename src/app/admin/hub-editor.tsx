@@ -18,11 +18,14 @@ export default function HubEditor({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null);
   const [confirmingTabDelete, setConfirmingTabDelete] = useState(false);
-  const [dragIndex, setDragIndex] = useState<number | null>(null);
+
+  const [dragId, setDragId] = useState<string | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const dragIndexRef = useRef<number | null>(null);
+  const [pointerY, setPointerY] = useState(0);
+  const dragGeometryRef = useRef<{ offsetY: number; left: number; width: number; height: number } | null>(null);
+  const dragIdRef = useRef<string | null>(null);
   const dragOverIndexRef = useRef<number | null>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   function setField<K extends keyof HubSection>(key: K, value: HubSection[K]) {
     onChange({ ...hub, [key]: value });
@@ -45,18 +48,29 @@ export default function HubEditor({
     setDeletingItemId(null);
   }
 
-  function startDrag(i: number) {
-    dragIndexRef.current = i;
-    dragOverIndexRef.current = i;
-    setDragIndex(i);
-    setDragOverIndex(i);
+  function startDrag(e: React.MouseEvent, id: string, index: number) {
+    const card = cardRefs.current[index];
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    dragGeometryRef.current = {
+      offsetY: e.clientY - rect.top,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height,
+    };
+    dragIdRef.current = id;
+    dragOverIndexRef.current = index;
+    setDragId(id);
+    setDragOverIndex(index);
+    setPointerY(e.clientY);
   }
 
   useEffect(() => {
-    if (dragIndex === null) return;
+    if (dragId === null) return;
 
     function onMove(e: MouseEvent) {
-      let closest = dragIndexRef.current ?? 0;
+      setPointerY(e.clientY);
+      let closest = dragOverIndexRef.current ?? 0;
       let closestDist = Infinity;
       cardRefs.current.forEach((el, idx) => {
         if (!el) return;
@@ -75,17 +89,21 @@ export default function HubEditor({
     }
 
     function onUp() {
-      const from = dragIndexRef.current;
+      const id = dragIdRef.current;
       const to = dragOverIndexRef.current;
-      if (from !== null && to !== null && from !== to) {
-        const items = [...hub.items];
-        const [moved] = items.splice(from, 1);
-        items.splice(to, 0, moved);
-        onChange({ ...hub, items });
+      if (id !== null && to !== null) {
+        const from = hub.items.findIndex((it) => it.id === id);
+        if (from !== -1 && from !== to) {
+          const items = [...hub.items];
+          const [moved] = items.splice(from, 1);
+          items.splice(to, 0, moved);
+          onChange({ ...hub, items });
+        }
       }
-      dragIndexRef.current = null;
+      dragIdRef.current = null;
       dragOverIndexRef.current = null;
-      setDragIndex(null);
+      dragGeometryRef.current = null;
+      setDragId(null);
       setDragOverIndex(null);
     }
 
@@ -96,10 +114,24 @@ export default function HubEditor({
       window.removeEventListener('mouseup', onUp);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dragIndex]);
+  }, [dragId]);
 
   const editingItem = hub.items.find((it) => it.id === editingId) || null;
   const deletingItem = hub.items.find((it) => it.id === deletingItemId) || null;
+
+  // Live preview order while dragging, so other cards visibly make room.
+  const displayItems = (() => {
+    if (dragId === null || dragOverIndex === null) return hub.items;
+    const from = hub.items.findIndex((it) => it.id === dragId);
+    if (from === -1) return hub.items;
+    const items = [...hub.items];
+    const [moved] = items.splice(from, 1);
+    items.splice(dragOverIndex, 0, moved);
+    return items;
+  })();
+
+  const draggedItem = dragId ? hub.items.find((it) => it.id === dragId) : null;
+  const geom = dragGeometryRef.current;
 
   return (
     <div>
@@ -132,33 +164,54 @@ export default function HubEditor({
         <div className="guide-text" style={{ marginBottom: 10 }}>≡ 손잡이를 드래그해서 순서를 바꿀 수 있습니다. 순서는 실제 홈페이지 목록에도 그대로 반영됩니다.</div>
       )}
 
-      {hub.items.map((item, i) => (
+      {displayItems.map((item, i) => {
+        const isDragging = dragId === item.id;
+        return (
+          <div
+            key={item.id}
+            ref={(el) => { cardRefs.current[i] = el; }}
+            className="manage-card"
+            style={{ visibility: isDragging ? 'hidden' : 'visible' }}
+          >
+            <div className="manage-head">
+              <span
+                onMouseDown={(e) => { e.preventDefault(); startDrag(e, item.id, i); }}
+                style={{ cursor: dragId ? 'grabbing' : 'grab', color: '#94a3b8', fontWeight: 700, padding: '0 4px' }}
+                title="드래그해서 순서 변경"
+              >
+                ≡
+              </span>
+              <span className="manage-title" style={{ flex: 1 }}>{item.title || '(제목 없음)'}</span>
+              <div style={{ display: 'flex', gap: 6 }}>
+                <button type="button" className="btn-item-toggle" onClick={() => setEditingId(item.id)}>편집</button>
+                <button type="button" className="btn-item-delete" onClick={() => setDeletingItemId(item.id)}>삭제</button>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+
+      {draggedItem && geom && (
         <div
-          key={item.id}
-          ref={(el) => { cardRefs.current[i] = el; }}
-          className="manage-card"
+          className="manage-card is-open"
           style={{
-            opacity: dragIndex === i ? 0.4 : 1,
-            borderTop: dragOverIndex === i && dragIndex !== null && dragIndex !== i ? '2px solid #2563eb' : undefined,
-            userSelect: dragIndex !== null ? 'none' : undefined,
+            position: 'fixed',
+            left: geom.left,
+            top: pointerY - geom.offsetY,
+            width: geom.width,
+            zIndex: 500,
+            boxShadow: '0 16px 32px rgba(15, 23, 42, 0.28)',
+            transform: 'scale(1.02) rotate(1deg)',
+            pointerEvents: 'none',
+            userSelect: 'none',
           }}
         >
           <div className="manage-head">
-            <span
-              onMouseDown={(e) => { e.preventDefault(); startDrag(i); }}
-              style={{ cursor: 'grab', color: '#94a3b8', fontWeight: 700, padding: '0 4px' }}
-              title="드래그해서 순서 변경"
-            >
-              ≡
-            </span>
-            <span className="manage-title" style={{ flex: 1 }}>{item.title || '(제목 없음)'}</span>
-            <div style={{ display: 'flex', gap: 6 }}>
-              <button type="button" className="btn-item-toggle" onClick={() => setEditingId(item.id)}>편집</button>
-              <button type="button" className="btn-item-delete" onClick={() => setDeletingItemId(item.id)}>삭제</button>
-            </div>
+            <span style={{ color: '#2563eb', fontWeight: 700, padding: '0 4px' }}>≡</span>
+            <span className="manage-title" style={{ flex: 1 }}>{draggedItem.title || '(제목 없음)'}</span>
           </div>
         </div>
-      ))}
+      )}
 
       {editingItem && (
         <ItemEditorModal item={editingItem} onSave={saveItem} onClose={() => setEditingId(null)} />
