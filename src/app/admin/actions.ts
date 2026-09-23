@@ -9,8 +9,8 @@ export async function saveSiteContent(content: SiteContent) {
 
   revalidatePath('/');
   revalidatePath('/products');
-  revalidatePath('/gallery');
   revalidatePath('/advisory');
+  revalidatePath('/about');
   revalidatePath('/contact');
   revalidatePath('/privacy');
   revalidatePath('/terms');

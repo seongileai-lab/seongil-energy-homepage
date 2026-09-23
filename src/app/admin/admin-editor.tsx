@@ -9,13 +9,12 @@ import HubEditor from './hub-editor';
 import MiscEditor from './misc-editor';
 import LivePreview from './live-preview';
 
-type TabKey = 'home' | 'about' | 'products' | 'gallery' | 'advisory' | 'etc';
+type TabKey = 'home' | 'about' | 'products' | 'advisory' | 'etc';
 
 const tabs: { key: TabKey; label: string }[] = [
   { key: 'home', label: '홈' },
   { key: 'about', label: 'About' },
   { key: 'products', label: 'Products' },
-  { key: 'gallery', label: 'Gallery' },
   { key: 'advisory', label: 'Advisory' },
   { key: 'etc', label: '기타' },
 ];
@@ -65,7 +64,6 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
           )}
           {tab === 'about' && <AboutEditor about={content.about} onChange={(about) => setContent({ ...content, about })} />}
           {tab === 'products' && <HubEditor hub={content.products} onChange={(products) => setContent({ ...content, products })} />}
-          {tab === 'gallery' && <HubEditor hub={content.gallery} onChange={(gallery) => setContent({ ...content, gallery })} />}
           {tab === 'advisory' && <HubEditor hub={content.advisory} onChange={(advisory) => setContent({ ...content, advisory })} />}
           {tab === 'etc' && (
             <MiscEditor

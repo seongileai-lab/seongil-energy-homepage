@@ -5,7 +5,7 @@ import SiteHeader from '@/components/site/site-header';
 import SiteFooter from '@/components/site/site-footer';
 import HubList from '@/components/site/hub-list';
 
-type TabKey = 'home' | 'about' | 'products' | 'gallery' | 'advisory' | 'etc';
+type TabKey = 'home' | 'about' | 'products' | 'advisory' | 'etc';
 
 export default function LivePreview({ content, tab }: { content: SiteContent; tab: TabKey }) {
   const { hero, showcase } = content;
@@ -83,7 +83,6 @@ export default function LivePreview({ content, tab }: { content: SiteContent; ta
         )}
 
         {tab === 'products' && <HubList basePath="/products" hub={content.products} />}
-        {tab === 'gallery' && <HubList basePath="/gallery" hub={content.gallery} />}
         {tab === 'advisory' && <HubList basePath="/advisory" hub={content.advisory} />}
 
         {tab === 'etc' && (

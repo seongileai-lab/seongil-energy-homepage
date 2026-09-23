@@ -31,7 +31,6 @@ export default function SiteHeader({ logoUrl, logoText, headerBlur }: SiteHeader
       <nav className="site-nav-right">
         <Link href="/about" style={{ textDecoration: 'none', color: '#1e293b', fontSize: '0.83rem', fontWeight: 600 }}>About Us</Link>
         <Link href="/products" className="menu-link" style={{ textDecoration: 'none', color: '#1e293b', fontSize: '0.83rem', fontWeight: 600 }}>Products</Link>
-        <Link href="/gallery" style={{ textDecoration: 'none', color: '#1e293b', fontSize: '0.83rem', fontWeight: 600 }}>Gallery</Link>
         <Link href="/advisory" style={{ textDecoration: 'none', color: '#1e293b', fontSize: '0.83rem', fontWeight: 600 }}>Advisory</Link>
         <Link href="/contact" className="site-nav-btn">Contact</Link>
       </nav>

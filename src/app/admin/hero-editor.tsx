@@ -107,7 +107,6 @@ export default function HeroEditor({ hero, showcase, onHeroChange, onShowcaseCha
             <label>연결 페이지</label>
             <select className="form-control" value={item.linkTo} onChange={(e) => setItem(i, { linkTo: e.target.value as typeof item.linkTo })}>
               <option value="pageProducts">Products</option>
-              <option value="pageGallery">Gallery</option>
               <option value="pageAdvisory">Advisory</option>
             </select>
           </div>

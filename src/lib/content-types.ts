@@ -1,4 +1,4 @@
-export type LinkTarget = 'pageProducts' | 'pageGallery' | 'pageAdvisory';
+export type LinkTarget = 'pageProducts' | 'pageAdvisory';
 
 export interface HeroConfig {
   logoUrl: string;
@@ -89,7 +89,6 @@ export interface SiteContent {
   showcase: ShowcaseConfig;
   about: AboutConfig;
   products: HubConfig;
-  gallery: HubConfig;
   advisory: HubConfig;
   contact: ContactConfig;
   footer: FooterConfig;
@@ -139,12 +138,6 @@ export const defaultSiteContent: SiteContent = {
         title: '소개 항목 2',
         desc: '소개 항목 2에 대한 설명을 입력하세요.',
         imageUrl: '',
-        linkTo: 'pageGallery',
-      },
-      {
-        title: '소개 항목 3',
-        desc: '소개 항목 3에 대한 설명을 입력하세요.',
-        imageUrl: '',
         linkTo: 'pageAdvisory',
       },
     ],
@@ -165,27 +158,6 @@ export const defaultSiteContent: SiteContent = {
         detailImages: [],
         detailVideoUrl: '',
         detailDesc: '제품 1에 대한 상세 설명을 입력하세요.',
-        attachments: [],
-        showContactCta: false,
-      },
-    ],
-  },
-  gallery: {
-    mainTitle: 'Gallery',
-    mainDesc: 'Gallery 페이지 소개 문구를 입력하세요.',
-    bannerUrl: '',
-    subTitle: 'Archive',
-    subDesc: '목록 섹션 설명을 입력하세요. (클릭 시 상세페이지로 이동)',
-    items: [
-      {
-        id: id('gal', 1),
-        title: '갤러리 항목 1',
-        desc: '갤러리 항목 1에 대한 요약 설명을 입력하세요.',
-        badge: '',
-        thumbnailUrl: '',
-        detailImages: [],
-        detailVideoUrl: '',
-        detailDesc: '갤러리 항목 1에 대한 상세 설명을 입력하세요.',
         attachments: [],
         showContactCta: false,
       },
@@ -274,7 +246,6 @@ export function mergeWithDefaults(partial: Partial<SiteContent> | null | undefin
       items: partial.showcase?.items?.length ? partial.showcase.items : defaultSiteContent.showcase.items,
     },
     products: normalizeHub(partial.products, defaultSiteContent.products),
-    gallery: normalizeHub(partial.gallery, defaultSiteContent.gallery),
     advisory: normalizeHub(partial.advisory, defaultSiteContent.advisory),
     contact: { ...defaultSiteContent.contact, ...partial.contact },
     footer: { ...defaultSiteContent.footer, ...partial.footer },

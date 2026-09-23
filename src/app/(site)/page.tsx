@@ -3,7 +3,6 @@ import { getSiteContent } from '@/lib/content';
 
 const linkPathMap = {
   pageProducts: '/products',
-  pageGallery: '/gallery',
   pageAdvisory: '/advisory',
 } as const;
 
