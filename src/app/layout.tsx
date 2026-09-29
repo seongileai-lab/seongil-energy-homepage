@@ -21,6 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description,
     robots: { index: true, follow: true },
+    verification: { other: { "naver-site-verification": "f2f580ede14dec83f216cf8d8970f8facd398d4c" } },
     openGraph: {
       title: footer.brand,
       description,
