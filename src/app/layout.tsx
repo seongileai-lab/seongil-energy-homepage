@@ -10,7 +10,10 @@ const DEFAULT_SITE_URL = "https://seongileng.kr";
 export async function generateMetadata(): Promise<Metadata> {
   const { footer, about, hero } = await getSiteContent();
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL;
-  const description = (about.subDesc || hero.desc || `${footer.brand} 공식 홈페이지`).slice(0, 160);
+  // Naver 서치어드바이저는 페이지 설명/OG 설명을 80자 이내로 권장한다.
+  const rawDescription = (about.subDesc || hero.desc || `${footer.brand} 공식 홈페이지`).trim();
+  const descriptionChars = [...rawDescription];
+  const description = descriptionChars.length <= 80 ? rawDescription : `${descriptionChars.slice(0, 79).join("")}…`;
   const ogImage = hero.bgImageUrl || hero.logoUrl || undefined;
 
   return {
