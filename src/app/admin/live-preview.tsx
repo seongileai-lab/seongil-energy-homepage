@@ -7,7 +7,9 @@ import HubList from '@/components/site/hub-list';
 
 type TabKey = string;
 
-export default function LivePreview({ content, tab }: { content: SiteContent; tab: TabKey }) {
+export default function LivePreview({ content, tab, section, onSelect }: { content: SiteContent; tab: TabKey; section: string; onSelect: (tab: string, section: string) => void }) {
+  const cls = (k: string, base = '') => [base, 'pv-sel', section === k ? 'pv-active' : ''].filter(Boolean).join(' ');
+  const sel = (t: string, k: string) => ({ 'data-pv': `${t}|${k}` });
   const { hero, showcase } = content;
   const activeHub = content.hubs.find((h) => h.id === tab);
 
@@ -32,12 +34,20 @@ export default function LivePreview({ content, tab }: { content: SiteContent; ta
         <div className="mock-dot mock-dot-yellow" />
         <div className="mock-dot mock-dot-green" />
       </div>
-      <div className="mock-browser-screen" onClickCapture={(e) => e.preventDefault()}>
-        <SiteHeader logoUrl={hero.logoUrl} logoText={hero.logoText} headerBlur={hero.headerBlur} hubs={content.hubs} />
+      <div className="mock-browser-screen" onClickCapture={(e) => {
+        e.preventDefault();
+        const el = (e.target as HTMLElement).closest('[data-pv]');
+        if (!el) return;
+        const [t, k] = (el.getAttribute('data-pv') ?? '').split('|');
+        onSelect(t, k);
+      }}>
+        <div {...sel('home', 'header')} className={cls('header')}>
+          <SiteHeader logoUrl={hero.logoUrl} logoText={hero.logoText} headerBlur={hero.headerBlur} hubs={content.hubs} />
+        </div>
 
         {tab === 'home' && (
           <>
-            <section className={`hero-canvas${hero.darkOverlay ? ' has-dark-overlay' : ''}`} style={heroStyle}>
+            <section {...sel('home', 'hero')} className={cls('hero', `hero-canvas${hero.darkOverlay ? ' has-dark-overlay' : ''}`)} style={heroStyle}>
               {hero.bgActive && hero.mediaType === 'video' && hero.bgVideoUrl && (
                 <video className="hero-bg-video" src={hero.bgVideoUrl} autoPlay muted loop playsInline />
               )}
@@ -48,7 +58,7 @@ export default function LivePreview({ content, tab }: { content: SiteContent; ta
             </section>
 
             <section className="showcase-section">
-              <div className="showcase-header-area">
+              <div {...sel('home', 'showcase')} className={cls('showcase', 'showcase-header-area')}>
                 <div className="showcase-category-label">{showcase.topLabel}</div>
                 <h3 className="showcase-main-title">{showcase.mainTitle}</h3>
                 <p className="showcase-sub-desc">{showcase.subDesc}</p>
@@ -56,7 +66,7 @@ export default function LivePreview({ content, tab }: { content: SiteContent; ta
 
               <div className="zigzag-list">
                 {showcase.items.map((item, i) => (
-                  <div key={i} className={`zigzag-item${i % 2 === 1 ? ' reverse' : ''}`}>
+                  <div key={i} {...sel('home', 'item-' + i)} className={cls('item-' + i, `zigzag-item${i % 2 === 1 ? ' reverse' : ''}`)}>
                     <div className="zigzag-textbox">
                       <div className="zigzag-tag">{item.title}</div>
                       <div className="zigzag-body-desc">{item.desc}</div>
@@ -71,7 +81,7 @@ export default function LivePreview({ content, tab }: { content: SiteContent; ta
         )}
 
         {tab === 'about' && (
-          <div className="content-hub-page">
+          <div {...sel('about', 'all')} className={cls('all', 'content-hub-page')}>
             <div className="hub-container">
               <div className="hub-header">
                 <h1 className="hub-title">{content.about.heading}</h1>
@@ -83,12 +93,16 @@ export default function LivePreview({ content, tab }: { content: SiteContent; ta
           </div>
         )}
 
-        {activeHub && <HubList basePath={`/${activeHub.id}`} hub={activeHub} />}
+        {activeHub && (
+          <div {...sel(activeHub.id, 'all')} className={cls('all')}>
+            <HubList basePath={`/${activeHub.id}`} hub={activeHub} />
+          </div>
+        )}
 
         {tab === 'etc' && (
           <div className="content-hub-page contact-hub-override">
             <div className="contact-wrapper">
-              <div className="contact-intro-box">
+              <div {...sel('etc', 'contact')} className={cls('contact', 'contact-intro-box')}>
                 <div className="contact-sub-label">{content.contact.subLabel}</div>
                 <h1 className="contact-main-heading">{content.contact.heading}</h1>
                 <p className="contact-lead-desc">{content.contact.leadDesc}</p>
@@ -100,7 +114,9 @@ export default function LivePreview({ content, tab }: { content: SiteContent; ta
           </div>
         )}
 
-        <SiteFooter footer={content.footer} />
+        <div {...sel('etc', 'footer')} className={cls('footer')}>
+          <SiteFooter footer={content.footer} />
+        </div>
       </div>
     </div>
   );

@@ -13,7 +13,10 @@ type TabKey = 'home' | 'about' | 'etc' | string;
 
 export default function AdminEditor({ initialContent }: { initialContent: SiteContent }) {
   const [content, setContent] = useState(initialContent);
-  const [tab, setTab] = useState<TabKey>('home');
+  const [tab, setTabRaw] = useState<TabKey>('home');
+  const [section, setSection] = useState('all');
+  function setTab(t: TabKey) { setTabRaw(t); setSection('all'); }
+  function handleSelect(t: string, s: string) { setTabRaw(t); setSection(s); }
   const [pending, startTransition] = useTransition();
   const [savedAt, setSavedAt] = useState<string | null>(null);
   const [saveError, setSaveError] = useState('');
@@ -56,7 +59,7 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
   return (
     <div className="admin-shell">
       <div className="admin-preview-note">
-        <LivePreview content={content} tab={tab} />
+        <LivePreview content={content} tab={tab} section={section} onSelect={handleSelect} />
       </div>
 
       <aside className="editor-pane">
@@ -89,8 +92,16 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
         )}
 
         <div className="tab-content" style={{ display: 'block' }}>
+          {section !== 'all' && (
+            <div className="section-bar">
+              <span>미리보기에서 선택한 영역만 편집 중</span>
+              <button type="button" className="btn-item-toggle" onClick={() => setSection('all')}>이 페이지 전체 보기</button>
+            </div>
+          )}
+          {section === 'all' && tab !== 'etc' && <p className="section-hint">왼쪽 미리보기에서 수정할 부분을 클릭하세요.</p>}
           {tab === 'home' && (
             <HeroEditor
+              section={section}
               hero={content.hero}
               showcase={content.showcase}
               hubs={content.hubs}
@@ -108,6 +119,7 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
           )}
           {tab === 'etc' && (
             <MiscEditor
+              section={section}
               contact={content.contact}
               footer={content.footer}
               privacy={content.privacy}

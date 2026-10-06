@@ -4,6 +4,7 @@ import type { HeroConfig, ShowcaseConfig, HubSection } from '@/lib/content-types
 import MediaUpload from '@/components/admin/media-upload';
 
 interface Props {
+  section?: string;
   hero: HeroConfig;
   showcase: ShowcaseConfig;
   hubs: HubSection[];
@@ -11,7 +12,7 @@ interface Props {
   onShowcaseChange: (showcase: ShowcaseConfig) => void;
 }
 
-export default function HeroEditor({ hero, showcase, hubs, onHeroChange, onShowcaseChange }: Props) {
+export default function HeroEditor({ section = 'all', hero, showcase, hubs, onHeroChange, onShowcaseChange }: Props) {
   function set<K extends keyof HeroConfig>(key: K, value: HeroConfig[K]) {
     onHeroChange({ ...hero, [key]: value });
   }
@@ -21,8 +22,11 @@ export default function HeroEditor({ hero, showcase, hubs, onHeroChange, onShowc
     onShowcaseChange({ ...showcase, items });
   }
 
+  const show = (k: string) => section === 'all' || section === k;
+
   return (
     <div>
+      {show('header') && (<>
       <div className="form-group">
         <label>로고 텍스트 (이미지 미등록 시 표시)</label>
         <input className="form-control" value={hero.logoText} onChange={(e) => set('logoText', e.target.value)} />
@@ -41,7 +45,9 @@ export default function HeroEditor({ hero, showcase, hubs, onHeroChange, onShowc
           헤더 바 항상 반투명 블러 적용
         </label>
       </div>
+      </>)}
 
+      {show('hero') && (<>
       <div className="form-group">
         <label>메인 카피 문구</label>
         <textarea className="form-control" value={hero.title} onChange={(e) => set('title', e.target.value)} />
@@ -85,15 +91,18 @@ export default function HeroEditor({ hero, showcase, hubs, onHeroChange, onShowc
           <input type="range" min={0} max={100} value={hero.bgPosY} onChange={(e) => set('bgPosY', Number(e.target.value))} />
         </div>
       </div>
+      </>)}
 
+      {show('showcase') && (
       <div className="form-group">
         <label>프로젝트 소개 섹션 상단 라벨 / 제목 / 설명</label>
         <input className="form-control" value={showcase.topLabel} onChange={(e) => onShowcaseChange({ ...showcase, topLabel: e.target.value })} />
         <textarea className="form-control" style={{ marginTop: 6 }} value={showcase.mainTitle} onChange={(e) => onShowcaseChange({ ...showcase, mainTitle: e.target.value })} />
         <textarea className="form-control" style={{ marginTop: 6 }} value={showcase.subDesc} onChange={(e) => onShowcaseChange({ ...showcase, subDesc: e.target.value })} />
       </div>
+      )}
 
-      {showcase.items.map((item, i) => (
+      {showcase.items.map((item, i) => (show('item-' + i) || section === 'showcase-items') && (
         <div className="zigzag-edit-card" key={i}>
           <div className="zigzag-edit-title">소개 항목 {i + 1}</div>
           <div className="form-group" style={{ marginBottom: 10, paddingBottom: 10 }}>
