@@ -112,6 +112,7 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
           {tab === 'about' && <AboutEditor about={content.about} onChange={(about) => setContent({ ...content, about })} />}
           {activeHub && (
             <HubEditor
+              section={section}
               hub={activeHub}
               onChange={(updated) => setContent({ ...content, hubs: content.hubs.map((h) => (h.id === updated.id ? updated : h)) })}
               onDelete={() => handleDeleteHub(activeHub.id)}

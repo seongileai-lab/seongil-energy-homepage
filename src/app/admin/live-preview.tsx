@@ -94,9 +94,12 @@ export default function LivePreview({ content, tab, section, onSelect }: { conte
         )}
 
         {activeHub && (
-          <div {...sel(activeHub.id, 'all')} className={cls('all')}>
-            <HubList basePath={`/${activeHub.id}`} hub={activeHub} />
-          </div>
+          <HubList
+            basePath={`/${activeHub.id}`}
+            hub={activeHub}
+            topProps={{ ...sel(activeHub.id, 'top'), className: cls('top') }}
+            listProps={{ ...sel(activeHub.id, 'list'), className: cls('list') }}
+          />
         )}
 
         {tab === 'etc' && (

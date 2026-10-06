@@ -1,15 +1,26 @@
 import Link from 'next/link';
+import type { HTMLAttributes, ReactNode } from 'react';
 import type { HubSection } from '@/lib/content-types';
 
-export default function HubList({ basePath, hub }: { basePath: string; hub: HubSection }) {
+type Attrs = HTMLAttributes<HTMLDivElement> & { 'data-pv'?: string };
+
+// Admin preview passes topProps/listProps to make each half clickable; the public site renders without wrappers.
+function Part({ attrs, children }: { attrs?: Attrs; children: ReactNode }) {
+  return attrs ? <div {...attrs}>{children}</div> : <>{children}</>;
+}
+
+export default function HubList({ basePath, hub, topProps, listProps }: { basePath: string; hub: HubSection; topProps?: Attrs; listProps?: Attrs }) {
   return (
     <div className="content-hub-page">
       <div className="hub-container">
+        <Part attrs={topProps}>
         <div className="hub-header">
           <h1 className="hub-title">{hub.mainTitle}</h1>
           <p className="hub-desc">{hub.mainDesc}</p>
         </div>
         {hub.bannerUrl && <div className="hub-key-banner" style={{ backgroundImage: `url('${hub.bannerUrl}')` }} />}
+        </Part>
+        <Part attrs={listProps}>
         <div className="hub-sub-header">
           <h2 className="hub-sub-title">{hub.subTitle}</h2>
           <p className="hub-sub-desc">{hub.subDesc}</p>
@@ -29,6 +40,7 @@ export default function HubList({ basePath, hub }: { basePath: string; hub: HubS
             </Link>
           ))}
         </div>
+        </Part>
       </div>
     </div>
   );

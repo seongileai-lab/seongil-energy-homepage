@@ -7,10 +7,12 @@ import ItemEditorModal from './item-editor-modal';
 import ConfirmDialog from './confirm-dialog';
 
 export default function HubEditor({
+  section = 'all',
   hub,
   onChange,
   onDelete,
 }: {
+  section?: string;
   hub: HubSection;
   onChange: (hub: HubSection) => void;
   onDelete: () => void;
@@ -132,9 +134,11 @@ export default function HubEditor({
 
   const draggedItem = dragId ? hub.items.find((it) => it.id === dragId) : null;
   const geom = dragGeometryRef.current;
+  const show = (k: string) => section === 'all' || section === k;
 
   return (
     <div>
+      {show('top') && (<>
       <div className="form-group">
         <div className="label-wrapper">
           <label>탭/메뉴 이름</label>
@@ -151,7 +155,9 @@ export default function HubEditor({
       </div>
 
       <MediaUpload label="상단 배너 이미지" value={hub.bannerUrl} onChange={(url) => setField('bannerUrl', url)} />
+      </>)}
 
+      {show('list') && (<>
       <div className="form-group">
         <label>목록 섹션 제목 / 설명</label>
         <input className="form-control" value={hub.subTitle} onChange={(e) => setField('subTitle', e.target.value)} />
@@ -190,6 +196,8 @@ export default function HubEditor({
           </div>
         );
       })}
+
+      </>)}
 
       {draggedItem && geom && (
         <div
