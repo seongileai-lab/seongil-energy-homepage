@@ -20,6 +20,11 @@ export interface ShowcaseItem {
   desc: string;
   imageUrl: string;
   linkTo: string; // a HubSection id, or '' for no link
+  textSide?: 'left' | 'right'; // which side the text box sits on; unset alternates by index
+}
+
+export function isTextRight(item: ShowcaseItem, index: number): boolean {
+  return item.textSide ? item.textSide === 'right' : index % 2 === 1;
 }
 
 export interface ShowcaseConfig {

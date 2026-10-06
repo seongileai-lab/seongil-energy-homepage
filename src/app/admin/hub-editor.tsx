@@ -237,7 +237,7 @@ export default function HubEditor({
       {confirmingTabDelete && (
         <ConfirmDialog
           title="탭 삭제"
-          message={`"${hub.navLabel}" 탭을 삭제하시겠습니까?\n\n이 탭의 모든 항목(${hub.items.length}개)이 함께 삭제되며, 이 작업은 되돌릴 수 없습니다.\n우측 하단 "전체 저장"을 눌러야 실제로 반영됩니다.`}
+          message={`"${hub.navLabel}" 탭을 삭제하시겠습니까?\n\n이 탭의 모든 항목(${hub.items.length}개)과 홈 화면에서 이 탭으로 연결된 소개 항목이 함께 삭제되며, 이 작업은 되돌릴 수 없습니다.\n우측 하단 "전체 저장"을 눌러야 실제로 반영됩니다.`}
           onConfirm={onDelete}
           onCancel={() => setConfirmingTabDelete(false)}
         />

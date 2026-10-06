@@ -1,6 +1,6 @@
 'use client';
 
-import type { SiteContent } from '@/lib/content-types';
+import { isTextRight, type SiteContent } from '@/lib/content-types';
 import SiteHeader from '@/components/site/site-header';
 import SiteFooter from '@/components/site/site-footer';
 import HubList from '@/components/site/hub-list';
@@ -66,7 +66,7 @@ export default function LivePreview({ content, tab, section, onSelect }: { conte
 
               <div className="zigzag-list">
                 {showcase.items.map((item, i) => (
-                  <div key={i} {...sel('home', 'item-' + i)} className={cls('item-' + i, `zigzag-item${i % 2 === 1 ? ' reverse' : ''}`)}>
+                  <div key={i} {...sel('home', 'item-' + i)} className={cls('item-' + i, `zigzag-item${isTextRight(item, i) ? ' reverse' : ''}`)}>
                     <div className="zigzag-textbox">
                       <div className="zigzag-tag">{item.title}</div>
                       <div className="zigzag-body-desc">{item.desc}</div>

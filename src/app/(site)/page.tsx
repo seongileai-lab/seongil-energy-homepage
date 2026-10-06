@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getSiteContent } from '@/lib/content';
+import { isTextRight } from '@/lib/content-types';
 
 export default async function HomePage() {
   const { hero, showcase } = await getSiteContent();
@@ -39,7 +40,7 @@ export default async function HomePage() {
 
         <div className="zigzag-list">
           {showcase.items.map((item, i) => (
-            <div key={i} className={`zigzag-item${i % 2 === 1 ? ' reverse' : ''}`}>
+            <div key={i} className={`zigzag-item${isTextRight(item, i) ? ' reverse' : ''}`}>
               <div className="zigzag-textbox">
                 <div className="zigzag-tag">{item.title}</div>
                 <div className="zigzag-body-desc">{item.desc}</div>

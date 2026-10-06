@@ -43,15 +43,37 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
       return;
     }
     const hub = newHubSection(name, content.hubs.map((h) => h.id));
-    setContent({ ...content, hubs: [...content.hubs, hub] });
+    // A new tab also gets an intro box on the home page that links to it.
+    const showcaseItem = { title: hub.navLabel, desc: hub.mainDesc, imageUrl: '', linkTo: hub.id };
+    setContent({
+      ...content,
+      hubs: [...content.hubs, hub],
+      showcase: { ...content.showcase, items: [...content.showcase.items, showcaseItem] },
+    });
     setTab(hub.id);
     setAddingHub(false);
     setNewHubName('');
   }
 
   function handleDeleteHub(hubId: string) {
-    setContent({ ...content, hubs: content.hubs.filter((h) => h.id !== hubId) });
+    setContent({
+      ...content,
+      hubs: content.hubs.filter((h) => h.id !== hubId),
+      showcase: { ...content.showcase, items: content.showcase.items.filter((it) => it.linkTo !== hubId) },
+    });
     setTab('home');
+  }
+
+  const [dragHubId, setDragHubId] = useState<string | null>(null);
+
+  function moveHub(fromId: string, toId: string) {
+    if (fromId === toId) return;
+    const hubs = [...content.hubs];
+    const from = hubs.findIndex((h) => h.id === fromId);
+    const to = hubs.findIndex((h) => h.id === toId);
+    const [moved] = hubs.splice(from, 1);
+    hubs.splice(to, 0, moved);
+    setContent({ ...content, hubs });
   }
 
   const activeHub = content.hubs.find((h) => h.id === tab);
@@ -67,7 +89,17 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
           <button className={`depth1-btn${tab === 'home' ? ' active' : ''}`} onClick={() => setTab('home')}>홈</button>
           <button className={`depth1-btn${tab === 'about' ? ' active' : ''}`} onClick={() => setTab('about')}>About</button>
           {content.hubs.map((hub) => (
-            <button key={hub.id} className={`depth1-btn${tab === hub.id ? ' active' : ''}`} onClick={() => setTab(hub.id)}>
+            <button
+              key={hub.id}
+              className={`depth1-btn${tab === hub.id ? ' active' : ''}${dragHubId === hub.id ? ' dragging' : ''}`}
+              onClick={() => setTab(hub.id)}
+              draggable
+              title="드래그해서 메뉴 순서 변경"
+              onDragStart={(e) => { setDragHubId(hub.id); e.dataTransfer.effectAllowed = 'move'; }}
+              onDragOver={(e) => { e.preventDefault(); if (dragHubId) moveHub(dragHubId, hub.id); }}
+              onDragEnd={() => setDragHubId(null)}
+              onDrop={(e) => e.preventDefault()}
+            >
               {hub.navLabel}
             </button>
           ))}

@@ -1,6 +1,6 @@
 'use client';
 
-import type { HeroConfig, ShowcaseConfig, HubSection } from '@/lib/content-types';
+import { isTextRight, type HeroConfig, type ShowcaseConfig, type HubSection } from '@/lib/content-types';
 import MediaUpload from '@/components/admin/media-upload';
 
 interface Props {
@@ -20,6 +20,10 @@ export default function HeroEditor({ section = 'all', hero, showcase, hubs, onHe
   function setItem(i: number, patch: Partial<ShowcaseConfig['items'][number]>) {
     const items = showcase.items.map((it, idx) => (idx === i ? { ...it, ...patch } : it));
     onShowcaseChange({ ...showcase, items });
+  }
+
+  function removeItem(i: number) {
+    onShowcaseChange({ ...showcase, items: showcase.items.filter((_, idx) => idx !== i) });
   }
 
   const show = (k: string) => section === 'all' || section === k;
@@ -104,7 +108,26 @@ export default function HeroEditor({ section = 'all', hero, showcase, hubs, onHe
 
       {showcase.items.map((item, i) => (show('item-' + i) || section === 'showcase-items') && (
         <div className="zigzag-edit-card" key={i}>
-          <div className="zigzag-edit-title">소개 항목 {i + 1}</div>
+          <div className="label-wrapper">
+            <div className="zigzag-edit-title">소개 항목 {i + 1}</div>
+            <button type="button" className="btn-item-delete" onClick={() => removeItem(i)}>이 항목 삭제</button>
+          </div>
+          <div className="form-group" style={{ marginBottom: 10, paddingBottom: 10 }}>
+            <label>글 박스(View All) 위치</label>
+            <div style={{ display: 'flex', gap: 16, fontSize: '0.82rem' }}>
+              {(['left', 'right'] as const).map((side) => (
+                <label key={side} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
+                  <input
+                    type="radio"
+                    name={`text-side-${i}`}
+                    checked={isTextRight(item, i) === (side === 'right')}
+                    onChange={() => setItem(i, { textSide: side })}
+                  />
+                  {side === 'left' ? '왼쪽' : '오른쪽'}
+                </label>
+              ))}
+            </div>
+          </div>
           <div className="form-group" style={{ marginBottom: 10, paddingBottom: 10 }}>
             <label>제목</label>
             <input className="form-control" value={item.title} onChange={(e) => setItem(i, { title: e.target.value })} />
