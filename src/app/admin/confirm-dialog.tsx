@@ -21,17 +21,17 @@ export default function ConfirmDialog({
         <div style={{ display: 'flex', gap: 8 }}>
           <button
             type="button"
-            onClick={onCancel}
-            style={{ flex: 1, padding: 10, borderRadius: 6, border: '1px solid #cbd5e1', background: '#fff', color: '#334155', fontWeight: 600, cursor: 'pointer' }}
-          >
-            취소
-          </button>
-          <button
-            type="button"
             onClick={onConfirm}
             style={{ flex: 1, padding: 10, borderRadius: 6, border: 'none', background: '#dc2626', color: '#fff', fontWeight: 700, cursor: 'pointer' }}
           >
             {confirmLabel}
+          </button>
+          <button
+            type="button"
+            onClick={onCancel}
+            style={{ flex: 1, padding: 10, borderRadius: 6, border: '1px solid #cbd5e1', background: '#fff', color: '#334155', fontWeight: 600, cursor: 'pointer' }}
+          >
+            취소
           </button>
         </div>
       </div>
