@@ -228,7 +228,7 @@ export default function HubEditor({
       {deletingItem && (
         <ConfirmDialog
           title="항목 삭제"
-          message={`"${deletingItem.title || '(제목 없음)'}" 항목을 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.`}
+          message={<><b>&quot;{deletingItem.title || '(제목 없음)'}&quot;</b> 항목을 삭제하시겠습니까?{'\n\n'}삭제하면 복구할 수 없습니다.</>}
           onConfirm={confirmDeleteItem}
           onCancel={() => setDeletingItemId(null)}
         />
@@ -237,7 +237,7 @@ export default function HubEditor({
       {confirmingTabDelete && (
         <ConfirmDialog
           title="탭 삭제"
-          message={`"${hub.navLabel}" 탭을 삭제하시겠습니까?\n\n이 탭의 모든 항목(${hub.items.length}개)과 홈 화면에서 이 탭으로 연결된 소개 항목이 함께 삭제되며, 이 작업은 되돌릴 수 없습니다.\n우측 하단 "전체 저장"을 눌러야 실제로 반영됩니다.`}
+          message={<><b>&quot;{hub.navLabel}&quot;</b> 탭을 삭제하시겠습니까?{'\n\n'}이 탭의 모든 항목({hub.items.length}개)과 홈 화면에서 이 탭으로 연결된 소개 항목이 함께 삭제되며, 삭제하면 복구할 수 없습니다.</>}
           onConfirm={onDelete}
           onCancel={() => setConfirmingTabDelete(false)}
         />

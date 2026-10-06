@@ -1,5 +1,7 @@
 'use client';
 
+import type { ReactNode } from 'react';
+
 export default function ConfirmDialog({
   title,
   message,
@@ -8,7 +10,7 @@ export default function ConfirmDialog({
   onCancel,
 }: {
   title: string;
-  message: string;
+  message: ReactNode;
   confirmLabel?: string;
   onConfirm: () => void;
   onCancel: () => void;

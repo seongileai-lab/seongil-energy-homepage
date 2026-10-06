@@ -158,9 +158,7 @@ export default function HeroEditor({ section = 'all', hero, showcase, hubs, onHe
       {deletingIndex !== null && (
         <ConfirmDialog
           title="소개 항목 삭제"
-          message={`"${showcase.items[deletingIndex]?.title || '(제목 없음)'}" 소개 항목을 삭제하시겠습니까?
-
-우측 하단 "전체 저장"을 눌러야 실제로 반영됩니다.`}
+          message={<><b>&quot;{showcase.items[deletingIndex]?.title || '(제목 없음)'}&quot;</b> 소개 항목을 삭제하시겠습니까?{'\n\n'}삭제하면 복구할 수 없습니다.</>}
           onConfirm={confirmRemoveItem}
           onCancel={() => setDeletingIndex(null)}
         />
