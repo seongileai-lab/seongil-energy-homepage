@@ -1,7 +1,9 @@
 'use client';
 
 import { isTextRight, type HeroConfig, type ShowcaseConfig, type HubSection } from '@/lib/content-types';
+import { useState } from 'react';
 import MediaUpload from '@/components/admin/media-upload';
+import ConfirmDialog from './confirm-dialog';
 
 interface Props {
   section?: string;
@@ -22,8 +24,12 @@ export default function HeroEditor({ section = 'all', hero, showcase, hubs, onHe
     onShowcaseChange({ ...showcase, items });
   }
 
-  function removeItem(i: number) {
-    onShowcaseChange({ ...showcase, items: showcase.items.filter((_, idx) => idx !== i) });
+  const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
+
+  function confirmRemoveItem() {
+    if (deletingIndex === null) return;
+    onShowcaseChange({ ...showcase, items: showcase.items.filter((_, idx) => idx !== deletingIndex) });
+    setDeletingIndex(null);
   }
 
   const show = (k: string) => section === 'all' || section === k;
@@ -110,7 +116,7 @@ export default function HeroEditor({ section = 'all', hero, showcase, hubs, onHe
         <div className="zigzag-edit-card" key={i}>
           <div className="label-wrapper">
             <div className="zigzag-edit-title">소개 항목 {i + 1}</div>
-            <button type="button" className="btn-item-delete" onClick={() => removeItem(i)}>이 항목 삭제</button>
+            <button type="button" className="btn-item-delete" onClick={() => setDeletingIndex(i)}>이 항목 삭제</button>
           </div>
           <div className="form-group" style={{ marginBottom: 10, paddingBottom: 10 }}>
             <label>글 박스(View All) 위치</label>
@@ -148,6 +154,17 @@ export default function HeroEditor({ section = 'all', hero, showcase, hubs, onHe
           <MediaUpload label="이미지" value={item.imageUrl} onChange={(url) => setItem(i, { imageUrl: url })} />
         </div>
       ))}
+
+      {deletingIndex !== null && (
+        <ConfirmDialog
+          title="소개 항목 삭제"
+          message={`"${showcase.items[deletingIndex]?.title || '(제목 없음)'}" 소개 항목을 삭제하시겠습니까?
+
+우측 하단 "전체 저장"을 눌러야 실제로 반영됩니다.`}
+          onConfirm={confirmRemoveItem}
+          onCancel={() => setDeletingIndex(null)}
+        />
+      )}
     </div>
   );
 }
