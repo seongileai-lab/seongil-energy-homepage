@@ -24,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description,
     robots: { index: true, follow: true },
-    verification: { other: { "naver-site-verification": "f2f580ede14dec83f216cf8d8970f8facd398d4c" } },
+    verification: { google: "00X5yWaOv-qp-SEVVplSe3I9j1pYlNseHguji-Kjips", other: { "naver-site-verification": "f2f580ede14dec83f216cf8d8970f8facd398d4c" } },
     openGraph: {
       title: footer.brand,
       description,
