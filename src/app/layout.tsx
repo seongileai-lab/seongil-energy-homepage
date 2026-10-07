@@ -6,6 +6,8 @@ import { getSiteContent } from "@/lib/content";
 // Override with the NEXT_PUBLIC_SITE_URL env var when reusing this template
 // for a different company/domain.
 const DEFAULT_SITE_URL = "https://seongileng.kr";
+// 네이버에서 한글 상호("성일에너지") 검색 시 title 매칭이 되도록 title에 한글명을 포함한다.
+const KOREAN_NAME = "성일에너지";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { footer, about, hero } = await getSiteContent();
@@ -19,14 +21,14 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(siteUrl),
     title: {
-      default: footer.brand,
-      template: `%s | ${footer.brand}`,
+      default: `${KOREAN_NAME} - 발전기·신재생에너지 전문`,
+      template: `%s | ${KOREAN_NAME}`,
     },
     description,
     robots: { index: true, follow: true },
     verification: { google: "00X5yWaOv-qp-SEVVplSe3I9j1pYlNseHguji-Kjips", other: { "naver-site-verification": "f2f580ede14dec83f216cf8d8970f8facd398d4c" } },
     openGraph: {
-      title: footer.brand,
+      title: `${KOREAN_NAME} - 발전기·신재생에너지 전문`,
       description,
       type: "website",
       locale: "ko_KR",

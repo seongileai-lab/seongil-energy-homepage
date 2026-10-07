@@ -14,8 +14,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...hub.items.map((item) => `/${hub.id}/${item.id}`),
   ]);
 
+  // 실제 수정 시각을 알 수 없으므로 lastModified를 생략한다 (요청마다 현재 시각이 찍히면 크롤러 신뢰도가 낮아짐).
   return [...staticPaths, ...hubPaths].map((path) => ({
     url: `${siteUrl}${path}`,
-    lastModified: new Date(),
   }));
 }
