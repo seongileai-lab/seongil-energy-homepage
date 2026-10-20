@@ -2,43 +2,41 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import type { HubSection } from '@/lib/content-types';
+import { usePathname } from 'next/navigation';
+import { company, nav, navCta } from '@/lib/site';
 
-interface SiteHeaderProps {
-  logoUrl: string;
-  logoText: string;
-  headerBlur: boolean;
-  hubs: HubSection[];
-}
-
-export default function SiteHeader({ logoUrl, logoText, headerBlur, hubs }: SiteHeaderProps) {
+export default function SiteHeader() {
+  const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const isHome = usePathname() === '/';
 
+  // 홈 첫 화면에서는 헤더를 숨기고, 스크롤하면 나타낸다.
   useEffect(() => {
-    function onScroll() {
-      setScrolled(window.scrollY > 40);
-    }
+    const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-
-  const showBg = headerBlur || scrolled;
+  const hidden = isHome && !scrolled && !open;
 
   return (
-    <header className={`site-header${showBg ? ' has-bar-bg' : ''}`}>
-      <Link href="/" className="site-logo-box">
-        {logoUrl ? <img src={logoUrl} alt={logoText} /> : <span>{logoText}</span>}
-      </Link>
-      <nav className="site-nav-right">
-        <Link href="/about" style={{ textDecoration: 'none', color: '#1e293b', fontSize: '0.83rem', fontWeight: 600 }}>About Us</Link>
-        {hubs.map((hub) => (
-          <Link key={hub.id} href={`/${hub.id}`} style={{ textDecoration: 'none', color: '#1e293b', fontSize: '0.83rem', fontWeight: 600 }}>
-            {hub.navLabel}
-          </Link>
-        ))}
-        <Link href="/contact" className="site-nav-btn">문의하기</Link>
-      </nav>
+    <header className={`site-header${isHome ? ' on-home' : ''}${hidden ? ' is-hidden' : ''}`}>
+      <div className="head wrap">
+        <Link className="brand" href="/" onClick={() => setOpen(false)}>
+          <b>SL</b>
+          <div>
+            {company.shortName}
+            <small>{company.en}</small>
+          </div>
+        </Link>
+        <button className="menu-toggle" aria-label="메뉴 열기" aria-expanded={open} onClick={() => setOpen(!open)}>☰</button>
+        <nav className={open ? 'open' : ''}>
+          {nav.map((n) => (
+            <Link key={n.href} href={n.href} onClick={() => setOpen(false)}>{n.label}</Link>
+          ))}
+          <Link className="contact" href="/contact" onClick={() => setOpen(false)}>{navCta}</Link>
+        </nav>
+      </div>
     </header>
   );
 }

@@ -1,13 +1,13 @@
-import { getSiteContent } from '@/lib/content';
+import type { Metadata } from 'next';
+import { terms } from '@/lib/policies';
 
-export default async function TermsPage() {
-  const { terms } = await getSiteContent();
+export const metadata: Metadata = { title: terms.title, description: '성일에너지 이용약관' };
+
+export default function TermsPage() {
   return (
-    <div className="policy-page-view">
-      <div className="policy-container">
-        <h2>{terms.title}</h2>
-        <div className="policy-body">{terms.content}</div>
-      </div>
-    </div>
+    <main className="wrap page-narrow">
+      <div className="phead"><h1>{terms.title}</h1></div>
+      <div className="policy">{terms.content}</div>
+    </main>
   );
 }

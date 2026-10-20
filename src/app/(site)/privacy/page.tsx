@@ -1,13 +1,13 @@
-import { getSiteContent } from '@/lib/content';
+import type { Metadata } from 'next';
+import { privacy } from '@/lib/policies';
 
-export default async function PrivacyPage() {
-  const { privacy } = await getSiteContent();
+export const metadata: Metadata = { title: privacy.title, description: '성일에너지 개인정보처리방침' };
+
+export default function PrivacyPage() {
   return (
-    <div className="policy-page-view">
-      <div className="policy-container">
-        <h2>{privacy.title}</h2>
-        <div className="policy-body">{privacy.content}</div>
-      </div>
-    </div>
+    <main className="wrap page-narrow">
+      <div className="phead"><h1>{privacy.title}</h1></div>
+      <div className="policy">{privacy.content}</div>
+    </main>
   );
 }

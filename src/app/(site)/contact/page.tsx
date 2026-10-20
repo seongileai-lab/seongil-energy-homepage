@@ -1,21 +1,23 @@
-import { getSiteContent } from '@/lib/content';
+import type { Metadata } from 'next';
 import ContactForm from './contact-form';
+import { company } from '@/lib/site';
 
-export default async function ContactPage() {
-  const { contact } = await getSiteContent();
+export const metadata: Metadata = {
+  title: '문의하기',
+  description: '제품 문의, 기술 상담, 파트너 제안을 남겨주시면 이메일로 회신드립니다.',
+};
 
+export default function ContactPage() {
   return (
-    <div className="content-hub-page contact-hub-override">
-      <div className="contact-wrapper">
-        <div className="contact-intro-box">
-          <div className="contact-sub-label">{contact.subLabel}</div>
-          <h1 className="contact-main-heading">{contact.heading}</h1>
-          <p className="contact-lead-desc">{contact.leadDesc}</p>
-        </div>
-        <div className="contact-form-box">
-          <ContactForm />
-        </div>
+    <main className="wrap page-narrow">
+      <div className="phead">
+        <div className="tag">CONTACT</div>
+        <h1>문의하기</h1>
+        <p className="lead">제품 문의 · 기술 상담 · 파트너 제안을 남겨주시면 이메일로 회신드립니다.<br />전화 문의 {company.phone}</p>
       </div>
-    </div>
+      <div className="contact-card">
+        <ContactForm />
+      </div>
+    </main>
   );
 }

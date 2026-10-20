@@ -1,54 +1,109 @@
 import Link from 'next/link';
-import { getSiteContent } from '@/lib/content';
-import { isTextRight } from '@/lib/content-types';
+import HeroSlider from '@/components/site/hero-slider';
+import PostCard from '@/components/site/post-card';
+import ProductCarousel from '@/components/site/product-carousel';
+import { sortedPosts } from '@/lib/posts';
+import { about, company, cta, hero, solutions, technology, vision } from '@/lib/site';
 
-export default async function HomePage() {
-  const { hero, showcase } = await getSiteContent();
-
-  const contentClass = [
-    'canvas-content',
-    hero.whiteText ? 'theme-white' : '',
-    hero.textShadow ? 'has-shadow' : '',
-  ].filter(Boolean).join(' ');
-
-  const heroStyle: React.CSSProperties & Record<string, string> = {
-    '--bg-pos-x': `${hero.bgPosX}%`,
-    '--bg-pos-y': `${hero.bgPosY}%`,
-  };
-  if (hero.bgActive && hero.mediaType === 'image' && hero.bgImageUrl) {
-    heroStyle.backgroundImage = `url('${hero.bgImageUrl}')`;
-  }
-
+export default function HomePage() {
   return (
     <>
-      <section className={`hero-canvas${hero.darkOverlay ? ' has-dark-overlay' : ''}`} style={heroStyle}>
-        {hero.bgActive && hero.mediaType === 'video' && hero.bgVideoUrl && (
-          <video className="hero-bg-video" src={hero.bgVideoUrl} autoPlay muted loop playsInline />
-        )}
-        <div className={contentClass}>
-          <h2 className="canvas-title">{hero.title}</h2>
-          <p className="canvas-desc">{hero.desc}</p>
+      <HeroSlider />
+
+      <section id="home" className="intro-band">
+        <div className="wrap">
+          <div className="eyebrow">{hero.eyebrow}</div>
+          <h1>{hero.titleLine1}<br /><span>{hero.titleLine2}</span></h1>
+          <p>{hero.desc}</p>
+          <div className="actions">
+            <Link className="btn" href={hero.primary.href}>{hero.primary.label}</Link>
+            <Link className="btn line" href={hero.secondary.href}>{hero.secondary.label}</Link>
+          </div>
+          <div className="hero-foot">
+            {hero.foot.map((f) => <div key={f.b}><strong>{f.b}</strong>{f.t}</div>)}
+          </div>
         </div>
       </section>
 
-      <section className="showcase-section">
-        <div className="showcase-header-area">
-          <div className="showcase-category-label">{showcase.topLabel}</div>
-          <h3 className="showcase-main-title">{showcase.mainTitle}</h3>
-          <p className="showcase-sub-desc">{showcase.subDesc}</p>
+      <section id="solutions" className="section solutions-sec">
+        <div className="wrap">
+          <div className="tag">{solutions.tag}</div>
+          <h2>{solutions.title}</h2>
+          <p className="intro">{solutions.intro}</p>
+          <ProductCarousel category="wind" />
+          <ProductCarousel category="rnd" extra={solutions.custom} />
         </div>
+      </section>
 
-        <div className="zigzag-list">
-          {showcase.items.map((item, i) => (
-            <div key={i} className={`zigzag-item${isTextRight(item, i) ? ' reverse' : ''}`}>
-              <div className="zigzag-textbox">
-                <div className="zigzag-tag">{item.title}</div>
-                <div className="zigzag-body-desc">{item.desc}</div>
-                <Link className="btn-zigzag-link" href={item.linkTo ? `/${item.linkTo}` : '#'}>View All</Link>
-              </div>
-              <div className="zigzag-imgbox" style={{ backgroundImage: `url('${item.imageUrl}')` }} />
+      <section id="technology" className="statement">
+        <div className="wrap">
+          <div>
+            <div className="eyebrow">{technology.eyebrow}</div>
+            <h2 className="pre-line">{technology.title}</h2>
+            <p>{technology.desc}</p>
+          </div>
+          <div className="values">
+            {technology.values.map((v) => (
+              <div className="value" key={v.b}><b>{v.b}</b><p>{v.t}</p></div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="about" className="section about-sec">
+        <div className="wrap about-grid">
+          <div>
+            <div className="tag">{about.tag}</div>
+            <h2 className="pre-line">{about.heading}</h2>
+            {about.paragraphs.map((t) => <p key={t}>{t}</p>)}
+            <p><Link href="/about" className="link-blue">회사소개 자세히 보기 →</Link></p>
+          </div>
+          <div className="aboutpic">
+            <strong>{about.badge.mark}</strong>
+            <span>{about.badge.name}</span>
+            <p>{about.badge.sub}</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="vision" className="section vision-sec">
+        <div className="wrap">
+          <div className="tag">{vision.tag}</div>
+          <h2>{vision.title}</h2>
+          <p className="intro">{vision.intro}</p>
+          <div className="grid">
+            {vision.items.map((v) => (
+              <div className="value glass" key={v.b}><b>{v.b}</b><p>{v.t}</p></div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="news" className="section news-sec">
+        <div className="wrap">
+          <div className="carousel-head">
+            <div>
+              <div className="tag">NEWS &amp; INSIGHTS</div>
+              <h2 className="news-h2">뉴스·인사이트</h2>
             </div>
-          ))}
+            <Link href="/news" className="view-all">{solutions.viewAll} →</Link>
+          </div>
+          <div className="post-grid">
+            {sortedPosts.slice(0, 3).map((p) => <PostCard key={p.slug} post={p} />)}
+          </div>
+        </div>
+      </section>
+
+      <section id="inquiry" className="cta">
+        <div className="wrap">
+          <div>
+            <h2>{cta.title}</h2>
+            <p>{cta.desc}</p>
+          </div>
+          <div className="cta-actions">
+            <a className="btn white" href={company.phoneHref}>{cta.button}</a>
+            <Link className="btn line" href="/contact">온라인 문의</Link>
+          </div>
         </div>
       </section>
     </>
