@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { SITE_URL, company } from "@/lib/site";
+import { banners } from "@/lib/products";
 
 // 네이버에서 한글 상호("성일에너지") 검색 시 title 매칭이 되도록 title에 한글명을 포함한다.
 const TITLE = `${company.shortName} - 발전기·신재생에너지 전문`;
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ko_KR",
     url: SITE_URL,
-    images: [{ url: "/hero/hero3.webp" }],
+    images: banners[0] ? [{ url: banners[0].src }] : [],
   },
 };
 

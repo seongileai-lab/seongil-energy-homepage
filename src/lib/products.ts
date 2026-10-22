@@ -1,12 +1,24 @@
-// 제품 데이터. 문구·이미지를 바꾸려면 이 파일만 수정하세요.
-// 이미지는 public/products(카드·갤러리), public/hero(인포그래픽·히어로 배너) 에 있습니다.
-export type Category = 'wind' | 'rnd';
+// 제품·배너 데이터. 이미지·PDF·카테고리·제품 이름은 구글 드라이브 "[연결] 홈페이지" 폴더에서 가져옵니다.
+// (npm run sync:drive 로 src/data/drive.json 과 public/drive 를 갱신) 설명 문구는 product-texts.ts 에서 같은 이름으로 연결합니다.
+import raw from '@/data/drive.json';
+import { productTexts, type ProductText, type Section } from './product-texts';
 
-export interface Section {
-  heading: string;
-  text?: string;
-  list?: { b: string; t: string }[];
+export type { Section };
+export type Category = string;
+
+interface DriveProduct {
+  name: string;
+  order: number | null;
+  thumb: string | null;
+  gallery: string[];
+  pdfs: { name: string; src: string }[];
 }
+interface DriveData {
+  banners: { title: string; src: string; link: string }[];
+  pages: { about: string[]; tech: string[]; esg: string[]; news: string[] };
+  categories: { name: string; order: number | null; products: DriveProduct[] }[];
+}
+const drive = raw as DriveData;
 
 export interface Product {
   slug: string;
@@ -14,13 +26,12 @@ export interface Product {
   title: string;
   badge: string;
   badgeTone?: 'warn' | 'ok';
-  summary: string; // 카드·메타 설명 (80자 이내)
-  tileDesc?: string; // 홈 카드에 보여줄 설명 (index 시안 문구). 없으면 summary 사용
-  cardImage: string;
+  summary: string;
+  tileDesc?: string;
+  cardImage: string; // 비어 있으면 이미지 없음
   cardPos?: string;
-  slide?: { src: string; pos: string }; // 있으면 홈 히어로 배너에 노출
   gallery: { src: string; alt: string }[];
-  pdf?: string;
+  pdfs: { name: string; src: string }[];
   lead: string;
   sections: Section[];
   specs: [string, string][];
@@ -28,308 +39,89 @@ export interface Product {
   faq?: { q: string; a: string }[];
 }
 
-export const categories: Record<Category, { label: string; en: string; desc: string }> = {
-  wind: { label: '풍력발전기', en: 'WIND POWER', desc: '미풍에서도 돌아가는 모듈형 풍력 기술로, 도로·도심·산업단지에 맞는 분산형 발전 솔루션을 제안합니다.' },
-  rnd: { label: '기술개발', en: 'R&D', desc: 'ESS, 소수력, 열회수 냉방, AI 제품개발까지. 개발 중인 기술은 현재 상태를 있는 그대로 안내합니다.' },
-};
+export interface Banner {
+  src: string;
+  alt: string;
+  href: string; // 비어 있으면 눌러도 이동하지 않음
+  pos: string;
+}
 
-export const products: Product[] = [
-  {
-    slug: 'road-safety-wind-light',
-    category: 'wind',
-    title: '도로 안전 풍력 경고등',
-    badge: '파일럿 실증 계획',
-    badgeTone: 'warn',
-    summary: '자연풍과 차량 주행풍으로 발전해 야간 LED 경고등을 켜는 독립전원 시스템입니다.',
-    cardImage: '/products/road1.jpg',
-    gallery: [
-      { src: '/products/road-safety/page-1.jpg', alt: '도로 안전 풍력 경고등 제품 소개서 1쪽' },
-      { src: '/products/road-safety/page-2.jpg', alt: '도로 안전 풍력 경고등 제품 소개서 2쪽' },
-      { src: '/products/road-safety/page-3.jpg', alt: '도로 안전 풍력 경고등 제품 소개서 3쪽' },
-      { src: '/products/road-safety/page-4.jpg', alt: '도로 안전 풍력 경고등 제품 소개서 4쪽' },
-      { src: '/products/road-safety/page-5.jpg', alt: '도로 안전 풍력 경고등 제품 소개서 5쪽' },
-      { src: '/products/road-safety/page-7.jpg', alt: '도로 안전 풍력 경고등 제품 소개서 6쪽' },
-      { src: '/products/road-safety/page-8.jpg', alt: '도로 안전 풍력 경고등 제품 소개서 7쪽' },
-      { src: '/products/road-safety/page-9.jpg', alt: '도로 안전 풍력 경고등 제품 소개서 8쪽' },
-    ],
-    pdf: '/pdf/road-safety-wind.pdf',
-    lead: '전기가 없는 곳에도, 풍력으로 안전을 밝힙니다. 자연풍과 차량 주행풍으로 발전하고 배터리에 저장해 야간에도 LED 경고등을 점등하는 독립전원 시스템입니다.',
-    sections: [
-      {
-        heading: '개요',
-        text: '기존 도로 안전시설은 태양광에 의존해 흐린 날과 야간에 발전이 제한되고, 먼지·눈·낙엽으로 성능이 떨어질 수 있습니다. 성일에너지의 도로 안전 풍력 경고등은 소형 수직축 풍력 발전으로 자연풍과 차량 주행풍을 함께 활용해 전력을 만들고, 배터리 모듈에 저장해 야간 LED 경고등을 안정적으로 점등합니다.',
-      },
-      {
-        heading: '주요 특징',
-        list: [
-          { b: '독립전원', t: '외부 전력 없이 자체 발전·운영, 배선 공사와 전력 인입 부담 감소' },
-          { b: '주·야간 운영', t: '햇빛과 관계없이 바람이 불면 발전' },
-          { b: '모듈형 설치', t: '시선유도봉, 가드레일 경고등, 교량 표지등, 공사구간 경고등 등에 장착' },
-          { b: '내구성', t: '알루미늄 합금·스테인리스 체결재와 방수 케이블 글랜드 적용' },
-        ],
-      },
-      {
-        heading: '적용 분야',
-        text: '산악·곡선 도로, 해안 도로, 도로 표지 폴, 고속도로·교량·공사 구간의 다중 배치 등 태양광이 부족하거나 전력 인입이 어려운 환경에 적합합니다.',
-      },
-    ],
-    specs: [
-      ['분류', '풍력 · 도로 안전'],
-      ['발전 방식', '소형 수직축 풍력'],
-      ['전원', '배터리 저장형 독립전원'],
-      ['용도', '야간 LED 경고등'],
-      ['상태', '파일럿 실증 계획'],
-    ],
-    note: '현재 파일럿 실증 계획 단계입니다. 발전량, 배터리 성능, LED 운영 데이터는 시범 설치 후 측정값으로 안내할 예정이며, 설치 조건과 인허가에 따라 달라질 수 있습니다.',
-    faq: [
-      { q: '태양광 경고등과 무엇이 다른가요?', a: '태양광은 일조량에 의존하지만, 풍력 경고등은 바람과 차량 주행풍을 활용해 흐린 날·야간에도 발전할 수 있습니다.' },
-      { q: '기존 시설물에 설치할 수 있나요?', a: '모듈형으로 설계되어 기존 시선유도봉·가드레일 등에 대규모 구조 변경 없이 설치하는 것을 목표로 합니다.' },
-      { q: '도입 또는 실증 협력은 어떻게 문의하나요?', a: '문의하기 버튼 또는 050-6337-2731로 연락 주세요. 시범 설치 부지와 조건을 함께 검토합니다.' },
-    ],
-  },
-  {
-    slug: 'energy-highway',
-    tileDesc: '도로 중앙분리대·가드레일 기반의 소형 풍력 모듈과 지역 분산전력 네트워크.',
-    category: 'wind',
-    title: '에너지 고속도로 풍력 발전기',
-    badge: '특허 출원',
-    summary: '중앙분리대·가드레일의 소형 풍력 모듈로 도로 위 바람을 전력으로 바꾸는 분산형 인프라입니다.',
-    cardImage: '/hero/hero3.webp',
-    slide: { src: '/hero/hero3.webp', pos: '50% 50%' },
-    gallery: [
-      { src: '/hero/hero3.webp', alt: '에너지 고속도로 풍력 발전기' },
-      { src: '/hero/hero3-info.webp', alt: '에너지 고속도로 풍력 발전기 설명 - 중앙분리대·가드레일 설치, 가로등별 인버터·ESS 연계' },
-    ],
-    lead: '중앙분리대와 가드레일에 설치된 소형 풍력 모듈이 주행 차량의 바람과 도로 회랑풍을 활용해 전기를 생산합니다. 가로등별 인버터·ESS를 통해 주변 지역에 바로 공급하는 분산형 도로 에너지 인프라입니다.',
-    sections: [
-      {
-        heading: '주요 특징',
-        list: [
-          { b: '중앙분리대·가드레일 설치', t: '도로 공간을 활용한 연속형 소형 풍력 모듈' },
-          { b: '가로등별 인버터·ESS 연계', t: '3kW 인버터 + 10kWh ESS(독립형 에너지 저장장치)' },
-          { b: '저압 분산 공급', t: '48V 저압으로 주변 지역에 안전하고 신속하게 공급' },
-          { b: '현장 생산·현장 소비', t: '생산한 전기를 인근 시설에서 바로 사용' },
-          { b: '송배전 부담 감소', t: '기존 송배전망 손실 없이 지역 단위 에너지 자립 실현' },
-        ],
-      },
-      { heading: '적용 분야', text: '고속도로·간선도로, 교량, 도로변 가로등 인근 시설 등에 적용을 구상하고 있습니다.' },
-    ],
-    specs: [
-      ['분류', '풍력 · 도로 인프라'],
-      ['발전 방식', '소형 풍력 모듈 (주행풍·회랑풍 활용)'],
-      ['저장', '가로등별 3kW 인버터 + 10kWh ESS'],
-      ['공급', '48V 저압 분산 공급'],
-      ['상태', '특허 출원'],
-    ],
-    note: '이미지는 홍보용 콘셉트 이미지이며, 성능과 설치 조건은 검증 및 인허가에 따라 달라질 수 있습니다.',
-  },
-  {
-    slug: 'modular-wind-tower',
-    tileDesc: '수직 적층형 풍력모듈을 활용한 도심·산업단지·데이터센터 인접 발전 인프라 구상.',
-    category: 'wind',
-    title: '모듈형 풍력 타워',
-    badge: '특허 출원',
-    summary: '송배전 없이 도심·데이터센터 옆에서 직접 쓰는 수직 적층형 풍력 타워입니다.',
-    cardImage: '/products/tower.jpg',
-    cardPos: 'center 30%',
-    gallery: [{ src: '/products/tower.jpg', alt: '도심형 모듈형 풍력 타워' }],
-    lead: '초속 2m/s의 저풍속 환경에서도 발전하는 무코어 스크류형 수직축 발전 모듈을 층층이 쌓아, 도심·산업단지·데이터센터 인접 지역에서 직접 전력을 생산하는 모듈형 풍력 타워입니다.',
-    sections: [
-      {
-        heading: '주요 특징',
-        list: [
-          { b: '저풍속 대응', t: '초속 2m/s 환경에서도 발전하는 코어리스·스크류형 수직축 구조' },
-          { b: '수직 적층형', t: '모듈을 층층이 쌓아 제한된 면적에서 용량 확장' },
-          { b: '현지 생산·현지 소비', t: '송배전 없이 인접 시설에서 직접 사용' },
-          { b: '맞춤 구성', t: '설치 환경에 맞게 모듈 구성을 커스터마이징' },
-        ],
-      },
-    ],
-    specs: [
-      ['분류', '풍력 · 도심형 타워'],
-      ['구조', '코어리스 스크류형 수직축 모듈 적층'],
-      ['저풍속 대응', '초속 2m/s'],
-      ['상태', '특허 출원'],
-    ],
-    note: '이미지는 홍보용 콘셉트 이미지이며, 성능과 설치 조건은 검증 및 인허가에 따라 달라질 수 있습니다.',
-  },
-  {
-    slug: 'hydrogen-wind-hybrid',
-    tileDesc: '풍력발전과 수소 보조동력 시스템을 결합한 복합 발전 기술 개발.',
-    category: 'wind',
-    title: '수소·풍력 하이브리드 발전기',
-    badge: '기술개발',
-    summary: '바람이 불면 풍력으로, 바람이 없으면 수소 연료전지로 전력을 이어가는 모듈형 발전기입니다.',
-    cardImage: '/hero/hero4.webp',
-    cardPos: 'center 50%',
-    slide: { src: '/hero/hero4.webp', pos: '50% 50%' },
-    gallery: [
-      { src: '/hero/hero4.webp', alt: '수소·풍력 하이브리드 발전기' },
-      { src: '/hero/hero4-info.webp', alt: '수소·풍력 하이브리드 발전기 제품 구조와 작동 원리' },
-    ],
-    lead: '스크류 블레이드 풍력 발전부와 BLDC 보조 구동부, 수소 연료전지 전원부를 하나로 결합했습니다. 바람이 불 때는 풍력으로 발전하고, 바람이 없을 때는 수소 전원으로 BLDC 모터를 구동해 발전을 지속합니다.',
-    sections: [
-      {
-        heading: '주요 특징',
-        list: [
-          { b: '24시간 연속 운전', t: '풍력과 수소의 결합으로 안정적인 전력 공급' },
-          { b: '저풍속 대응', t: '약한 바람에도 스크류 블레이드와 BLDC 보조 구동으로 작동' },
-          { b: '수소 백업 전원', t: '무풍 시에도 연료전지로 전력을 이어가는 하이브리드 시스템' },
-          { b: '분산형 전력 공급', t: '건물·산업단지·데이터센터 등 다양한 현장에 적용 가능' },
-          { b: '모듈형 구조', t: '콤팩트한 일체형으로 설치와 유지보수가 간편' },
-        ],
-      },
-      { heading: '적용 분야', text: '건물(오피스·상업시설·공공건물), 산업단지, 데이터센터, 스마트 인프라(항만·공항·도로·스마트시티).' },
-    ],
-    specs: [
-      ['분류', '풍력 · 하이브리드'],
-      ['구성', '풍력 발전부 + BLDC 보조 구동부 + 수소 전원부'],
-      ['운전', '풍력 우선, 무풍 시 수소 연료전지'],
-      ['상태', '기술개발'],
-    ],
-    note: '이미지는 홍보용 콘셉트 이미지이며, 성능과 설치 조건은 검증 및 인허가에 따라 달라질 수 있습니다.',
-  },
-  {
-    slug: 'hydrogen-wind-tower',
-    category: 'wind',
-    title: '수소·풍력 하이브리드 발전 타워',
-    badge: '특허 출원',
-    summary: '모듈형 풍력 타워와 수소 연료전지를 결합해 도심·산업단지에 24시간 분산형 전력을 공급합니다.',
-    cardImage: '/hero/hero5.webp',
-    cardPos: 'center 50%',
-    slide: { src: '/hero/hero5.webp', pos: '50% 50%' },
-    gallery: [
-      { src: '/hero/hero5.webp', alt: '수소·풍력 하이브리드 발전 타워' },
-      { src: '/hero/hero5-info.webp', alt: '수소·풍력 하이브리드 발전 타워 작동 원리와 주요 장점' },
-    ],
-    lead: '모듈형 풍력 타워와 수소 연료전지를 결합한 하이브리드 구조로, 산업단지·데이터센터·도심 인프라에 안정적인 분산형 전력을 공급합니다. 바람이 있을 때는 풍력을 우선 발전하고, 바람이 없을 때는 수소 연료전지가 전력 공급을 이어갑니다.',
-    sections: [
-      {
-        heading: '주요 장점',
-        list: [
-          { b: '24시간 전력 공급', t: '바람이 멈춰도 끊김 없는 안정적 전력' },
-          { b: '도심·산업단지 설치', t: '제한된 공간에도 설치 가능한 컴팩트한 설계' },
-          { b: '송배전 부담 감소', t: '현지 생산·현지 소비로 계통 부담 최소화' },
-          { b: '모듈형 확장 구조', t: '수요에 따라 모듈 추가로 손쉬운 용량 확장' },
-          { b: 'ESG·RE100 대응', t: '무탄소 에너지로 지속가능한 미래 실현' },
-        ],
-      },
-      { heading: '적용 분야', text: '데이터센터, 산업단지, 공장, 도심 인프라(스마트시티·공공시설).' },
-    ],
-    specs: [
-      ['분류', '풍력 · 하이브리드 타워'],
-      ['구성', '모듈형 풍력 모듈 + 수소 연료전지 시스템'],
-      ['운전', '바람 있을 때 풍력 우선, 없을 때 수소 연료전지'],
-      ['상태', '특허 출원'],
-    ],
-    note: '이미지는 홍보용 콘셉트 이미지이며, 성능과 설치 조건은 검증 및 인허가에 따라 달라질 수 있습니다.',
-  },
-  {
-    slug: 'one-code-ess',
-    tileDesc: '계통연계·독립형 운전과 자동 동기화 기술을 통합한 차세대 ESS 솔루션.',
-    category: 'rnd',
-    title: '원코드형 ESS',
-    badge: '기술개발',
-    summary: '독립형과 계통연계를 하나의 코드로 구현하고, 복전 시 충돌 없이 자동 전환하는 ESS입니다.',
-    cardImage: '/products/ess/page-1.jpg',
-    cardPos: 'center 50%',
-    slide: { src: '/products/ess/page-1.jpg', pos: '50% 50%' },
-    gallery: [
-      { src: '/products/ess/page-2.jpg', alt: '원코드형 ESS 사업화 전략 및 파트너 모집' },
-      { src: '/products/ess/page-3.jpg', alt: '원코드형 ESS 문제 정의와 시장 기회' },
-      { src: '/products/ess/page-4.jpg', alt: '원코드형 ESS 차별성 - 기존 제품과 비교' },
-      { src: '/products/ess/page-5.jpg', alt: '원코드형 ESS PCT 국제조사기관 견해서 기반 기술성' },
-      { src: '/products/ess/page-6.jpg', alt: '성일에너지 ESS 제품 라인업' },
-      { src: '/products/ess/page-7.jpg', alt: '대표 인사말' },
-      { src: '/products/ess/page-8.jpg', alt: '성일에너지 ESS - The Future Stores 24 Hours' },
-    ],
-    pdf: '/pdf/onecode-ess.pdf',
-    lead: '기존 통합형 ESS는 입력선과 출력선을 분리해 시공해야 합니다. 성일에너지 원코드형 ESS는 독립형과 계통연계 기능을 하나의 코드로 구현해, 손으로 꽂는 원코드 방식으로 간단하게 연결합니다.',
-    sections: [
-      {
-        heading: '주요 특징',
-        list: [
-          { b: '원코드 방식', t: '입력선·출력선 분리 없이 하나의 코드로 연결' },
-          { b: '독립형 + 계통연계', t: '두 운전 방식을 하나의 ESS로 구현' },
-          { b: '간편한 설치', t: '전력계통과 부하(가정·건물) 사이에 간단히 연결' },
-        ],
-      },
-    ],
-    specs: [
-      ['분류', 'ESS · 전력변환'],
-      ['운전 방식', '독립형 + 계통연계 (원코드)'],
-      ['상태', '기술개발'],
-    ],
-  },
-  {
-    slug: 'micro-hydro',
-    category: 'rnd',
-    title: '소수력 발전 시스템',
-    badge: '시제품 · 출력 검증 예정',
-    badgeTone: 'warn',
-    summary: '수로·배수로에 설치하는 이중 로터 모듈형 분산 발전 시스템입니다.',
-    cardImage: '/products/hydro.jpg',
-    gallery: [{ src: '/products/hydro.jpg', alt: '모듈형 소수력 발전 시스템' }],
-    lead: '수로·배수로에 설치하는 이중 로터 모듈형 분산 발전 시스템입니다.',
-    sections: [],
-    specs: [
-      ['분류', '소수력 · 분산 발전'],
-      ['구조', '이중 로터 모듈형'],
-      ['상태', '시제품 · 출력 검증 예정'],
-    ],
-    note: '현재 시제품 단계이며 출력 성능은 검증 후 측정값으로 안내할 예정입니다.',
-  },
-  {
-    slug: 'fairless-aircon',
-    category: 'rnd',
-    title: '페어리스 에어컨',
-    badge: '특허 등록 2건 · 시험성적서',
-    badgeTone: 'ok',
-    summary: '실외기·배기덕트 없이 버려지는 열을 회수하는 일체형 폐열회수 에어컨입니다.',
-    cardImage: '/products/aircon.jpg',
-    gallery: [{ src: '/products/aircon.jpg', alt: '폐열회수 에어컨' }],
-    lead: '실외기와 배기덕트 없이 버려지는 열을 회수하는 일체형 에어컨입니다.',
-    sections: [],
-    specs: [
-      ['분류', '냉방 · 폐열회수'],
-      ['구조', '실외기·배기덕트 없는 일체형'],
-      ['인증', '특허 등록 2건 · 시험성적서'],
-    ],
-  },
-  {
-    slug: 'ai-product-development',
-    tileDesc: '기구·전기전자·센서·AI 제어·시제품 제작을 연결하는 통합 개발 서비스.',
-    category: 'rnd',
-    title: '신제품 개발 · 기술상담',
-    badge: '기술상담',
-    summary: '아이디어를 AI 설계·임베디드 보드·피드백 제어·시제품 제작까지 연결하는 맞춤형 개발 솔루션입니다.',
-    cardImage: '/hero/hero1.webp',
-    cardPos: 'center 28%',
-    slide: { src: '/hero/hero1.webp', pos: '50% 28%' },
-    gallery: [{ src: '/hero/hero1.webp', alt: '신제품 개발 기술상담 전문 - AI 기반 맞춤형 개발 솔루션' }],
-    lead: '기구·전기전자·제어·AI를 융합해 아이디어를 실제 제품으로 만들어 드립니다. 전문 엔지니어와의 1:1 맞춤 상담으로 설계부터 시제품 제작까지 함께합니다.',
-    sections: [
-      {
-        heading: '서비스 구성',
-        list: [
-          { b: '1:1 맞춤 기술상담', t: '전문 엔지니어의 맞춤 컨설팅' },
-          { b: 'AI 기반 제품개발', t: '아이디어를 빠르고 정확하게 구체화' },
-          { b: 'AI 임베디드 시스템 개발', t: '하드웨어부터 소프트웨어까지' },
-          { b: '피드백 제어 시스템 설계', t: '더 스마트하고 안정적인 제품' },
-          { b: '시제품 제작 · 개발', t: '아이디어를 실물로 구현' },
-        ],
-      },
-    ],
-    specs: [
-      ['분류', '기술개발 · 컨설팅'],
-      ['융합 분야', '기구 · 전기전자 · 제어 · AI'],
-      ['문의', '050-6337-2731'],
-    ],
-  },
-];
+function hash(s: string): string {
+  let h = 5381;
+  for (const ch of s) h = ((h << 5) + h + ch.charCodeAt(0)) >>> 0;
+  return h.toString(36);
+}
+
+// 알고 있는 카테고리는 영문 라벨·설명을 붙이고, 새 카테고리는 폴더 이름만 사용합니다.
+const KNOWN_CATEGORIES: Record<string, { key: string; en: string; desc: string }> = {
+  풍력발전기: { key: 'wind', en: 'WIND POWER', desc: '미풍에서도 돌아가는 모듈형 풍력 기술로, 도로·도심·산업단지에 맞는 분산형 발전 솔루션을 제안합니다.' },
+  기술개발: { key: 'rnd', en: 'R&D', desc: 'ESS, 소수력, 열회수 냉방, AI 제품개발까지. 개발 중인 기술은 현재 상태를 있는 그대로 안내합니다.' },
+};
+const KNOWN_ORDER = Object.keys(KNOWN_CATEGORIES);
+const TEXT_ORDER = productTexts.map((t) => t.title);
+const textByTitle = new Map<string, ProductText>(productTexts.map((t) => [t.title, t]));
+
+const sortedCategories = [...drive.categories].sort((a, b) => {
+  const ka = a.order ?? 1000 + (KNOWN_ORDER.indexOf(a.name) >= 0 ? KNOWN_ORDER.indexOf(a.name) : 500);
+  const kb = b.order ?? 1000 + (KNOWN_ORDER.indexOf(b.name) >= 0 ? KNOWN_ORDER.indexOf(b.name) : 500);
+  return ka - kb;
+});
+
+export const categories: Record<Category, { label: string; en: string; desc: string }> = {};
+export const categoryKeys: Category[] = [];
+export const products: Product[] = [];
+
+for (const cat of sortedCategories) {
+  const known = KNOWN_CATEGORIES[cat.name];
+  const key = known?.key ?? `c-${hash(cat.name)}`;
+  categories[key] = { label: cat.name, en: known?.en ?? '', desc: known?.desc ?? '' };
+  categoryKeys.push(key);
+
+  const ordered = cat.products
+    .map((p, i) => ({ p, i }))
+    .sort((a, b) => {
+      const ta = TEXT_ORDER.indexOf(a.p.name);
+      const tb = TEXT_ORDER.indexOf(b.p.name);
+      const ka = a.p.order ?? 1000 + (ta >= 0 ? ta : 500 + a.i);
+      const kb = b.p.order ?? 1000 + (tb >= 0 ? tb : 500 + b.i);
+      return ka - kb;
+    });
+
+  for (const { p } of ordered) {
+    const t = textByTitle.get(p.name);
+    const images = p.gallery.length ? p.gallery : p.thumb ? [p.thumb] : [];
+    products.push({
+      slug: t?.slug ?? `p-${hash(p.name)}`,
+      category: key,
+      title: p.name,
+      badge: t?.badge ?? '',
+      badgeTone: t?.badgeTone,
+      summary: t?.summary ?? '',
+      tileDesc: t?.tileDesc,
+      cardImage: p.thumb ?? images[0] ?? '',
+      cardPos: t?.cardPos,
+      gallery: images.map((src, i) => ({ src, alt: images.length > 1 ? `${p.name} ${i + 1}` : p.name })),
+      pdfs: p.pdfs,
+      lead: t?.lead ?? '',
+      sections: t?.sections ?? [],
+      specs: t?.specs ?? [],
+      note: t?.note,
+      faq: t?.faq,
+    });
+  }
+}
 
 export function getProduct(slug: string): Product | undefined {
   return products.find((p) => p.slug === slug);
 }
 
-export const slideProducts = products.filter((p) => p.slide);
+// 홈 배너: 링크가 제품 이름이면 그 제품 상세로, / 또는 http 로 시작하면 그 주소로 이동합니다.
+export const banners: Banner[] = drive.banners.map((b) => {
+  const linked = products.find((p) => p.title === b.link);
+  const href = linked ? `/product/${linked.slug}` : /^(\/|https?:\/\/)/.test(b.link) ? b.link : '';
+  const text = textByTitle.get(b.link) ?? textByTitle.get(b.title);
+  return { src: b.src, alt: b.title, href, pos: text?.slidePos ?? '50% 50%' };
+});
+
+// 회사소개·핵심기술·ESG·뉴스 폴더의 사진 (없으면 빈 배열)
+export const pageImages = drive.pages;

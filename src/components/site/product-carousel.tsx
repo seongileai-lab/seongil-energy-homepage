@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import ThumbImage from '@/components/site/thumb-image';
 import { categories, products, type Category, type Product } from '@/lib/products';
 import { solutions } from '@/lib/site';
 
@@ -83,8 +84,7 @@ export default function ProductCarousel({ category, excludeSlug, title, viewAllH
         <div className="car-track" ref={track} onScroll={update}>
           {items.map((p) => (
             <Link className="car-item" key={p.slug} href={`/product/${p.slug}`}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={p.cardImage} alt={p.gallery[0]?.alt ?? p.title} style={p.cardPos ? { objectPosition: p.cardPos } : undefined} loading="lazy" />
+              <ThumbImage p={p} />
               <h4>{p.title}</h4>
             </Link>
           ))}

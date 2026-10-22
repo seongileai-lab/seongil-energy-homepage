@@ -14,10 +14,10 @@ export const company = {
 };
 
 export const nav = [
-  { href: '/#about', label: '회사소개' },
-  { href: '/solutions', label: '제품·솔루션' },
+  { href: '/about', label: '회사소개' },
   { href: '/technology', label: '핵심기술' },
-  { href: '/#vision', label: 'ESG·비전' },
+  { href: '/solutions', label: '제품·솔루션' },
+  { href: '/esg', label: 'ESG·비전' },
   { href: '/news', label: '뉴스·인사이트' },
 ];
 export const navCta = '기술상담 문의 ↗';

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { categories, products, type Category } from '@/lib/products';
+import ThumbImage from '@/components/site/thumb-image';
+import { categories, categoryKeys, products } from '@/lib/products';
 import { solutions } from '@/lib/site';
 
 export const metadata: Metadata = {
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default function SolutionsPage() {
-  const groups = (Object.keys(categories) as Category[]).map((cat) => ({
+  const groups = categoryKeys.map((cat) => ({
     cat,
     items: products.filter((p) => p.category === cat),
   }));
@@ -29,12 +30,11 @@ export default function SolutionsPage() {
           <div className="title-grid">
             {items.map((p) => (
               <Link className="car-item" key={p.slug} href={`/product/${p.slug}`}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={p.cardImage} alt={p.gallery[0]?.alt ?? p.title} style={p.cardPos ? { objectPosition: p.cardPos } : undefined} loading="lazy" />
+                <ThumbImage p={p} />
                 <h4>{p.title}</h4>
               </Link>
             ))}
-            {cat === 'rnd' && (
+            {cat === categoryKeys[categoryKeys.length - 1] && (
               <Link className="car-item" href={solutions.custom.href}>
                 <div className="car-ph">{solutions.custom.placeholder}</div>
                 <h4>{solutions.custom.title}</h4>

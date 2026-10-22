@@ -16,9 +16,9 @@ export async function generateMetadata({ params }: PageProps<'/product/[slug]'>)
   if (!p) return {};
   return {
     title: p.title,
-    description: p.summary,
+    description: p.summary || p.lead.slice(0, 80) || p.title,
     alternates: { canonical: `/product/${p.slug}` },
-    openGraph: { title: p.title, description: p.summary, images: [{ url: p.gallery[0]?.src ?? p.cardImage }] },
+    openGraph: { title: p.title, description: p.summary || p.title, images: p.cardImage ? [{ url: p.cardImage }] : [] },
   };
 }
 
@@ -32,8 +32,8 @@ export default async function ProductPage({ params }: PageProps<'/product/[slug]
     '@type': 'Product',
     name: p.title,
     brand: { '@type': 'Brand', name: company.shortName },
-    description: p.summary,
-    image: `${SITE_URL}${p.gallery[0]?.src ?? p.cardImage}`,
+    description: p.summary || p.title,
+    ...(p.cardImage ? { image: `${SITE_URL}${p.cardImage}` } : {}),
   };
 
   return (
@@ -43,16 +43,13 @@ export default async function ProductPage({ params }: PageProps<'/product/[slug]
         <Link href="/">홈</Link> › <Link href="/solutions">제품·솔루션</Link> › <Link href={`/category/${p.category}`}>{categories[p.category].label}</Link> › {p.title}
       </div>
       <div className="phead">
-        <span className={`badge${p.badgeTone ? ` ${p.badgeTone}` : ''}`}>{p.badge}</span>
+        {p.badge && <span className={`badge${p.badgeTone ? ` ${p.badgeTone}` : ''}`}>{p.badge}</span>}
         <h1>{p.title}</h1>
-        <p className="lead">{p.lead}</p>
+        {p.lead && <p className="lead">{p.lead}</p>}
       </div>
 
       <div className="layout">
         <div className="body">
-          {p.pdf && (
-            <div className="pdf-bar"><span>📄 제품 소개서 (PDF)</span><a href={p.pdf} download>PDF 다운로드 ↓</a></div>
-          )}
           <ImageGallery images={p.gallery} />
 
           {p.sections.map((s) => (
@@ -80,19 +77,23 @@ export default async function ProductPage({ params }: PageProps<'/product/[slug]
         </div>
 
         <aside className="side">
-          <div className="box">
-            <h3>제품 정보</h3>
-            <table className="spec">
-              <tbody>
-                {p.specs.map(([k, v]) => <tr key={k}><th>{k}</th><td>{v}</td></tr>)}
-              </tbody>
-            </table>
-          </div>
+          {p.specs.length > 0 && (
+            <div className="box">
+              <h3>제품 정보</h3>
+              <table className="spec">
+                <tbody>
+                  {p.specs.map(([k, v]) => <tr key={k}><th>{k}</th><td>{v}</td></tr>)}
+                </tbody>
+              </table>
+            </div>
+          )}
           <div className="box">
             <h3>도입 · 기술 문의</h3>
             <p className="side-p">제품 문의와 협력 제안을 함께 검토합니다. 전화 {company.phone}</p>
             <Link className="btn block" href="/contact">문의하기</Link>
-            {p.pdf && <a className="btn dark block" href={p.pdf} download>소개서 PDF 받기</a>}
+            {p.pdfs.map((f) => (
+              <a key={f.src} className="btn dark block" href={f.src} download={f.name}>{p.pdfs.length > 1 ? f.name : '소개서 PDF 받기'}</a>
+            ))}
           </div>
         </aside>
       </div>

@@ -1,0 +1,160 @@
+{
+  "banners": [
+    {
+      "title": "에너지 고속도로 풍력 발전기",
+      "src": "/drive/banner/1.webp?v=a5eb246e",
+      "link": "에너지 고속도로 풍력 발전기"
+    },
+    {
+      "title": "수소·풍력 하이브리드 발전기",
+      "src": "/drive/banner/2.webp?v=51e3cc8e",
+      "link": "수소·풍력 하이브리드 발전기"
+    },
+    {
+      "title": "수소·풍력 하이브리드 발전 타워",
+      "src": "/drive/banner/3.webp?v=1c7e3fec",
+      "link": "수소·풍력 하이브리드 발전 타워"
+    },
+    {
+      "title": "원코드형 ESS",
+      "src": "/drive/banner/4.jpg?v=02488825",
+      "link": "원코드형 ESS"
+    },
+    {
+      "title": "신제품 개발 · 기술상담",
+      "src": "/drive/banner/5.webp?v=b619c380",
+      "link": "신제품 개발 · 기술상담"
+    }
+  ],
+  "pages": {
+    "about": [
+      "/drive/about/1.webp?v=51e3cc8e"
+    ],
+    "tech": [],
+    "esg": [
+      "/drive/esg/1.webp?v=1c7e3fec"
+    ],
+    "news": []
+  },
+  "categories": [
+    {
+      "name": "기술개발",
+      "order": null,
+      "products": [
+        {
+          "name": "소수력 발전 시스템",
+          "order": null,
+          "thumb": "/drive/products/c1p1/thumb.jpg?v=537a2d4f",
+          "gallery": [
+            "/drive/products/c1p1/detail-1.jpg?v=537a2d4f"
+          ],
+          "pdfs": []
+        },
+        {
+          "name": "신제품 개발 · 기술상담",
+          "order": null,
+          "thumb": "/drive/products/c1p2/thumb.webp?v=b619c380",
+          "gallery": [
+            "/drive/products/c1p2/detail-1.webp?v=b619c380"
+          ],
+          "pdfs": []
+        },
+        {
+          "name": "원코드형 ESS",
+          "order": null,
+          "thumb": "/drive/products/c1p3/thumb.jpg?v=02488825",
+          "gallery": [
+            "/drive/products/c1p3/detail-1.jpg?v=1a2b19d4",
+            "/drive/products/c1p3/detail-2.jpg?v=7be54344",
+            "/drive/products/c1p3/detail-3.jpg?v=d38136f9",
+            "/drive/products/c1p3/detail-4.jpg?v=3e42796d",
+            "/drive/products/c1p3/detail-5.jpg?v=6c5924a1",
+            "/drive/products/c1p3/detail-6.jpg?v=f7ff5846",
+            "/drive/products/c1p3/detail-7.jpg?v=051c4024"
+          ],
+          "pdfs": [
+            {
+              "name": "원코드형 ESS 소개서.pdf",
+              "src": "/drive/products/c1p3/file-1.pdf?v=88239765"
+            }
+          ]
+        },
+        {
+          "name": "페어리스 에어컨",
+          "order": null,
+          "thumb": "/drive/products/c1p4/thumb.jpg?v=636463dc",
+          "gallery": [
+            "/drive/products/c1p4/detail-1.jpg?v=636463dc"
+          ],
+          "pdfs": []
+        }
+      ]
+    },
+    {
+      "name": "풍력발전기",
+      "order": null,
+      "products": [
+        {
+          "name": "도로 안전 풍력 경고등",
+          "order": null,
+          "thumb": "/drive/products/c2p1/thumb.jpg?v=0162d067",
+          "gallery": [
+            "/drive/products/c2p1/detail-1.jpg?v=6fb93b7c",
+            "/drive/products/c2p1/detail-2.jpg?v=11e84abd",
+            "/drive/products/c2p1/detail-3.jpg?v=a5a87d59",
+            "/drive/products/c2p1/detail-4.jpg?v=83623c7f",
+            "/drive/products/c2p1/detail-5.jpg?v=b14b6051",
+            "/drive/products/c2p1/detail-6.jpg?v=18893300",
+            "/drive/products/c2p1/detail-7.jpg?v=be2c57f4",
+            "/drive/products/c2p1/detail-8.jpg?v=da92678c"
+          ],
+          "pdfs": [
+            {
+              "name": "도로 안전 풍력 경고등 소개서.pdf",
+              "src": "/drive/products/c2p1/file-1.pdf?v=18787d7d"
+            }
+          ]
+        },
+        {
+          "name": "모듈형 풍력 타워",
+          "order": null,
+          "thumb": "/drive/products/c2p2/thumb.jpg?v=4f714bff",
+          "gallery": [
+            "/drive/products/c2p2/detail-1.jpg?v=4f714bff"
+          ],
+          "pdfs": []
+        },
+        {
+          "name": "수소·풍력 하이브리드 발전 타워",
+          "order": null,
+          "thumb": "/drive/products/c2p3/thumb.webp?v=1c7e3fec",
+          "gallery": [
+            "/drive/products/c2p3/detail-1.webp?v=1c7e3fec",
+            "/drive/products/c2p3/detail-2.webp?v=c2a1274c"
+          ],
+          "pdfs": []
+        },
+        {
+          "name": "수소·풍력 하이브리드 발전기",
+          "order": null,
+          "thumb": "/drive/products/c2p4/thumb.webp?v=51e3cc8e",
+          "gallery": [
+            "/drive/products/c2p4/detail-1.webp?v=51e3cc8e",
+            "/drive/products/c2p4/detail-2.webp?v=ba8bf924"
+          ],
+          "pdfs": []
+        },
+        {
+          "name": "에너지 고속도로 풍력 발전기",
+          "order": null,
+          "thumb": "/drive/products/c2p5/thumb.webp?v=a5eb246e",
+          "gallery": [
+            "/drive/products/c2p5/detail-1.webp?v=a5eb246e",
+            "/drive/products/c2p5/detail-2.webp?v=884d857c"
+          ],
+          "pdfs": []
+        }
+      ]
+    }
+  ]
+}

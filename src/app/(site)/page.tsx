@@ -3,7 +3,13 @@ import HeroSlider from '@/components/site/hero-slider';
 import PostCard from '@/components/site/post-card';
 import ProductCarousel from '@/components/site/product-carousel';
 import { sortedPosts } from '@/lib/posts';
+import { categoryKeys, pageImages } from '@/lib/products';
 import { about, company, cta, hero, solutions, technology, vision } from '@/lib/site';
+
+// 드라이브 폴더의 사진을 CSS 배경으로 쓰기 위한 값 (사진이 없으면 배경 사진 없이 표시)
+function cssImg(name: string, src?: string): React.CSSProperties {
+  return src ? ({ [name]: `url("${src}")` } as React.CSSProperties) : {};
+}
 
 export default function HomePage() {
   return (
@@ -25,32 +31,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="solutions" className="section solutions-sec">
-        <div className="wrap">
-          <div className="tag">{solutions.tag}</div>
-          <h2>{solutions.title}</h2>
-          <p className="intro">{solutions.intro}</p>
-          <ProductCarousel category="wind" />
-          <ProductCarousel category="rnd" extra={solutions.custom} />
-        </div>
-      </section>
-
-      <section id="technology" className="statement">
-        <div className="wrap">
-          <div>
-            <div className="eyebrow">{technology.eyebrow}</div>
-            <h2 className="pre-line">{technology.title}</h2>
-            <p>{technology.desc}</p>
-          </div>
-          <div className="values">
-            {technology.values.map((v) => (
-              <div className="value" key={v.b}><b>{v.b}</b><p>{v.t}</p></div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="about" className="section about-sec">
+      <section id="about" className="section about-sec" style={cssImg('--about-img', pageImages.about[0])}>
         <div className="wrap about-grid">
           <div>
             <div className="tag">{about.tag}</div>
@@ -66,11 +47,39 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="vision" className="section vision-sec">
+      <section id="technology" className="statement">
+        <div className="wrap">
+          <div>
+            <div className="eyebrow">{technology.eyebrow}</div>
+            <h2 className="pre-line">{technology.title}</h2>
+            <p>{technology.desc}</p>
+            <p><Link href="/technology" className="more-link">핵심기술 자세히 보기 →</Link></p>
+          </div>
+          <div className="values">
+            {technology.values.map((v) => (
+              <div className="value" key={v.b}><b>{v.b}</b><p>{v.t}</p></div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="solutions" className="section solutions-sec">
+        <div className="wrap">
+          <div className="tag">{solutions.tag}</div>
+          <h2>{solutions.title}</h2>
+          <p className="intro">{solutions.intro}</p>
+          {categoryKeys.map((k, i) => (
+            <ProductCarousel key={k} category={k} extra={i === categoryKeys.length - 1 ? solutions.custom : undefined} />
+          ))}
+        </div>
+      </section>
+
+      <section id="vision" className="section vision-sec" style={cssImg('--esg-img', pageImages.esg[0])}>
         <div className="wrap">
           <div className="tag">{vision.tag}</div>
           <h2>{vision.title}</h2>
           <p className="intro">{vision.intro}</p>
+          <p><Link href="/esg" className="more-link">ESG·비전 자세히 보기 →</Link></p>
           <div className="grid">
             {vision.items.map((v) => (
               <div className="value glass" key={v.b}><b>{v.b}</b><p>{v.t}</p></div>

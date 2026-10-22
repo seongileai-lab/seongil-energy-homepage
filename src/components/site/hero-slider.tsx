@@ -2,15 +2,10 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { slideProducts } from '@/lib/products';
+import { banners } from '@/lib/products';
 
-// 슬라이드는 src/lib/products.ts 에서 slide 가 지정된 제품입니다. 클릭하면 제품 상세로 이동합니다.
-const SLIDES = slideProducts.map((p) => ({
-  src: p.slide!.src,
-  pos: p.slide!.pos,
-  alt: p.gallery[0]?.alt ?? p.title,
-  href: `/product/${p.slug}`,
-}));
+// 슬라이드는 드라이브 "0.배너" 폴더에서 옵니다. 링크가 있으면 눌렀을 때 이동합니다.
+const SLIDES = banners;
 const INTERVAL_MS = 5000;
 
 export default function HeroSlider() {
@@ -33,18 +28,22 @@ export default function HeroSlider() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {SLIDES.map((s, i) => (
-        <Link
-          key={s.src}
-          href={s.href}
-          className={`hero-slide${i === index ? ' active' : ''}`}
-          aria-hidden={i !== index}
-          tabIndex={i === index ? 0 : -1}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+      {SLIDES.map((s, i) => {
+        const cls = `hero-slide${i === index ? ' active' : ''}`;
+        const img = (
+          // eslint-disable-next-line @next/next/no-img-element
           <img src={s.src} alt={s.alt} style={{ objectPosition: s.pos }} loading={i === 0 ? 'eager' : 'lazy'} />
-        </Link>
-      ))}
+        );
+        return s.href ? (
+          <Link key={s.src} href={s.href} className={cls} aria-hidden={i !== index} tabIndex={i === index ? 0 : -1}>
+            {img}
+          </Link>
+        ) : (
+          <div key={s.src} className={cls} aria-hidden={i !== index}>
+            {img}
+          </div>
+        );
+      })}
       <button className="hero-edge prev" aria-label="이전 배너" onClick={() => go(index - 1)}><span>‹</span></button>
       <button className="hero-edge next" aria-label="다음 배너" onClick={() => go(index + 1)}><span>›</span></button>
       <div className="hero-dots">
