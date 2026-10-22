@@ -20,7 +20,8 @@ const dirs = (dir) => list(dir).filter((e) => e.isDirectory()).map((e) => e.name
 const files = (dir) => (fs.existsSync(dir) ? list(dir).filter((e) => e.isFile()).map((e) => e.name) : []);
 
 // "01_제목", "3.제목" → { order: 1, title: '제목' } / 숫자가 없으면 order=null
-function parseName(name) {
+function parseName(rawName) {
+  const name = rawName.normalize('NFC'); // 맥에서 만든 이름(NFD)도 같은 글자로 비교되도록 정규화
   const m = /^(\d+)\s*[._-]\s*(.+)$/.exec(name);
   return m ? { order: Number(m[1]), title: m[2].trim() } : { order: null, title: name.trim() };
 }
@@ -62,7 +63,7 @@ if (top[0]) {
       return;
     }
     const linkFile = files(folder).find((f) => /^링크\.txt$/i.test(f));
-    const link = linkFile ? fs.readFileSync(path.join(folder, linkFile), 'utf8').replace(/^\uFEFF/, '').trim().split(/\r?\n/)[0].trim() : '';
+    const link = linkFile ? fs.readFileSync(path.join(folder, linkFile), 'utf8').replace(/^\uFEFF/, '').trim().split(/\r?\n/)[0].trim().normalize('NFC') : '';
     banners.push({ title: it.title, src: publish(path.join(folder, image), `banner/${i + 1}${path.extname(image).toLowerCase()}`), link });
   });
 }

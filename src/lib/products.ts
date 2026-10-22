@@ -57,6 +57,7 @@ const KNOWN_CATEGORIES: Record<string, { key: string; en: string; desc: string }
   풍력발전기: { key: 'wind', en: 'WIND POWER', desc: '미풍에서도 돌아가는 모듈형 풍력 기술로, 도로·도심·산업단지에 맞는 분산형 발전 솔루션을 제안합니다.' },
   기술개발: { key: 'rnd', en: 'R&D', desc: 'ESS, 소수력, 열회수 냉방, AI 제품개발까지. 개발 중인 기술은 현재 상태를 있는 그대로 안내합니다.' },
 };
+KNOWN_CATEGORIES['풍력'] = KNOWN_CATEGORIES['풍력발전기']; // 폴더 이름을 '풍력'으로 줄여도 같은 카테고리로 인식
 const KNOWN_ORDER = Object.keys(KNOWN_CATEGORIES);
 const TEXT_ORDER = productTexts.map((t) => t.title);
 const textByTitle = new Map<string, ProductText>(productTexts.map((t) => [t.title, t]));
@@ -115,11 +116,13 @@ export function getProduct(slug: string): Product | undefined {
   return products.find((p) => p.slug === slug);
 }
 
-// 홈 배너: 링크가 제품 이름이면 그 제품 상세로, / 또는 http 로 시작하면 그 주소로 이동합니다.
+// 홈 배너 링크: 링크.txt 가 있으면 그 내용(제품 이름 → 제품 상세, / 또는 http 주소 → 그 주소)을 쓰고,
+// 없으면 배너 폴더 이름(제목)이 제품 이름과 같을 때 자동으로 그 제품 상세로 연결합니다.
 export const banners: Banner[] = drive.banners.map((b) => {
-  const linked = products.find((p) => p.title === b.link);
-  const href = linked ? `/product/${linked.slug}` : /^(\/|https?:\/\/)/.test(b.link) ? b.link : '';
-  const text = textByTitle.get(b.link) ?? textByTitle.get(b.title);
+  const target = b.link || b.title;
+  const linked = products.find((p) => p.title === target);
+  const href = linked ? `/product/${linked.slug}` : /^(\/|https?:\/\/)/.test(target) ? target : '';
+  const text = textByTitle.get(target) ?? textByTitle.get(b.title);
   return { src: b.src, alt: b.title, href, pos: text?.slidePos ?? '50% 50%' };
 });
 
